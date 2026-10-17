@@ -87,11 +87,11 @@ const ui = {
 
       navActions.innerHTML = `
         ${isAdmin ? '<a href="admin.html" class="btn btn-secondary btn-sm" style="border: 1px solid var(--color-danger); color: var(--color-danger); font-weight:700;">Admin Panel</a>' : ''}
-        <a href="notifications.html" class="btn btn-outline btn-sm" title="Notifications" id="nav-notifications-link">
-          🔔 <span id="nav-unread-badge" style="display:none; background:var(--color-danger); color:#fff; border-radius:10px; padding:1px 5px; font-size:10px;">0</span>
+        <a href="notifications.html" class="btn btn-outline btn-sm" title="Notifications" id="nav-notifications-link" style="position: relative;">
+          🔔 <span id="nav-unread-badge" style="display:none; background:var(--color-danger); color:#fff; border-radius:10px; padding:2px 6px; font-size:11px; font-weight:700;">0</span>
         </a>
-        <a href="${window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile'}" class="btn btn-outline btn-sm" onclick="sessionStorage.removeItem('selected_profile_id')" style="display: flex; align-items: center; gap: 0.4rem;">
-          <span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:var(--color-primary); color:#fff; text-align:center; font-size:11px; line-height:24px;">${initials}</span>
+        <a href="${window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile'}" class="btn btn-outline btn-sm" onclick="sessionStorage.removeItem('selected_profile_id')" style="display: flex; align-items: center; gap: 0.55rem;">
+          <span style="display:inline-block; width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, var(--color-primary), var(--color-accent)); color:#fff; text-align:center; font-size:12px; font-weight:700; line-height:28px;">${initials}</span>
           ${user?.name?.split(' ')[0] || 'Profile'}
         </a>
         <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>

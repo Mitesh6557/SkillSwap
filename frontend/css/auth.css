@@ -4,7 +4,7 @@
  */
 
 .auth-wrapper {
-  min-height: calc(100vh - 68px - 140px);
+  min-height: calc(100vh - 76px - 140px);
   display: flex;
   align-items: center;
   justify-content: center;
