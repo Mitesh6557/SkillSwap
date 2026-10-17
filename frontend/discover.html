@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover skills to learn and connect with expert community partners on SkillSwap.">
+  <title>Discover Skills & Exchange Partners - SkillSwap</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/discover.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        ⚡ Skill<span>Swap</span>
+      </a>
+
+      <button class="menu-toggle-btn" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="discover.html" class="nav-link active">Discover Skills</a></li>
+        <li><a href="my-swaps.html" class="nav-link">My Swaps</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Sign Up Free</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="discover-layout">
+    <div class="container">
+      <div class="section-header" style="text-align: left; margin-bottom: 2rem;">
+        <h1 class="section-title">Discover Knowledge Partners</h1>
+        <p class="section-subtitle">Find community members offering skills you wish to learn</p>
+      </div>
+
+      <!-- Advanced Filters Bar -->
+      <div class="search-filter-bar">
+        <div class="search-input-wrapper">
+          <label for="search-input" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Search by Skill, Name, or Bio</label>
+          <input type="text" id="search-input" class="form-control" placeholder="e.g. JavaScript, Python, Guitar, Figma...">
+        </div>
+
+        <div style="flex: 1; min-width: 180px;">
+          <label for="wanted-skill-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">They Want to Learn</label>
+          <input type="text" id="wanted-skill-filter" class="form-control" placeholder="Skill they are seeking...">
+        </div>
+
+        <div style="flex: 1; min-width: 160px;">
+          <label for="location-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Location</label>
+          <input type="text" id="location-filter" class="form-control" placeholder="City or Country...">
+        </div>
+
+        <div style="flex: 1; min-width: 160px;">
+          <label for="availability-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Availability</label>
+          <select id="availability-filter" class="form-control">
+            <option value="">Any Availability</option>
+            <option value="Weekends">Weekends</option>
+            <option value="Evenings">Evenings</option>
+            <option value="Weekdays">Weekdays</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: flex-end;">
+          <button id="reset-filters-btn" class="btn btn-secondary" style="height: 42px;">Reset</button>
+        </div>
+      </div>
+
+      <!-- Active Filter Status & Count -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div id="results-count" style="font-size: 0.95rem; color: var(--color-text-muted); font-weight: 500;">
+          Showing available exchange partners...
+        </div>
+      </div>
+
+      <!-- Users Grid -->
+      <div id="users-grid" class="users-grid">
+        <!-- Rendered by discover.js -->
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 3rem;">
+        <button id="prev-page-btn" class="btn btn-outline btn-sm" disabled>&larr; Previous</button>
+        <span id="page-indicator" style="font-size: 0.9rem; font-weight: 600;">Page 1</span>
+        <button id="next-page-btn" class="btn btn-outline btn-sm" disabled>Next &rarr;</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 SkillSwap. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/discover.js"></script>
+</body>
+</html>

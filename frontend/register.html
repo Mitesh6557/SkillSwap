@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create a free SkillSwap account and start swapping your skills with others today.">
+  <title>Create Account - SkillSwap</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        ⚡ Skill<span>Swap</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="discover.html" class="nav-link">Discover Skills</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1 class="auth-title">Join SkillSwap</h1>
+        <p class="auth-subtitle">Create an account to begin exchanging your skills</p>
+      </div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label for="name" class="form-label">Full Name</label>
+          <input type="text" id="name" class="form-control" placeholder="e.g. Jordan Lee" required autocomplete="name">
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" class="form-control" placeholder="name@example.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Password (min. 6 characters)</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="new-password">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="location" class="form-label">City, Country</label>
+            <input type="text" id="location" class="form-control" placeholder="e.g. San Francisco, USA">
+          </div>
+          <div class="form-group">
+            <label for="availability" class="form-label">Availability</label>
+            <input type="text" id="availability" class="form-control" placeholder="e.g. Weekends, Evenings">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bio" class="form-label">Brief Bio / Interests</label>
+          <textarea id="bio" class="form-control" rows="2" placeholder="Tell the community what you like to learn or teach..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary auth-btn-submit" id="submit-btn">
+          Create Free Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Sign in here</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 SkillSwap. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (auth.isAuthenticated()) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      const form = document.getElementById('register-form');
+      const submitBtn = document.getElementById('submit-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const location = document.getElementById('location').value.trim();
+        const availability = document.getElementById('availability').value.trim() || 'Weekends & Evenings';
+        const bio = document.getElementById('bio').value.trim();
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating account...';
+
+        try {
+          await auth.register({ name, email, password, location, availability, bio });
+          ui.showToast('Account created successfully! Welcome to SkillSwap.', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 600);
+        } catch (err) {
+          ui.showToast(err.message, 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Free Account';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SkillSwap administration portal for moderation and platform oversight.">
+  <title>Admin Portal - SkillSwap</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        ⚡ Skill<span>Swap</span> <span style="font-size: 0.75rem; background: var(--color-danger); color: #fff; padding: 0.15rem 0.5rem; border-radius: var(--radius-full); vertical-align: middle;">ADMIN</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="nav-link">Member Dashboard</a></li>
+        <li><a href="admin.html" class="nav-link active">Admin Console</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="dashboard.html" class="btn btn-outline btn-sm">Exit Admin</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding: 2.5rem 0 4rem;">
+    <div class="container">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 class="section-title">Platform Administration</h1>
+          <p class="section-subtitle">Manage members, moderate skills, inspect platform exchanges, and export audit logs</p>
+        </div>
+        <!-- CSV Export Buttons -->
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <a id="btn-export-users" href="#" class="btn btn-secondary btn-sm">📥 Users CSV</a>
+          <a id="btn-export-swaps" href="#" class="btn btn-secondary btn-sm">📥 Swaps CSV</a>
+          <a id="btn-export-feedback" href="#" class="btn btn-secondary btn-sm">📥 Feedback CSV</a>
+        </div>
+      </div>
+
+      <!-- Admin Metrics Overview Cards -->
+      <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <div id="stat-total-users" class="stat-value">0</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon success">🌐</div>
+          <div class="stat-info">
+            <div id="stat-public-profiles" class="stat-value">0</div>
+            <div class="stat-label">Public Profiles</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon accent">🔄</div>
+          <div class="stat-info">
+            <div id="stat-total-swaps" class="stat-value">0</div>
+            <div class="stat-label">Total Swaps</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon warning">⏳</div>
+          <div class="stat-info">
+            <div id="stat-pending-swaps" class="stat-value">0</div>
+            <div class="stat-label">Pending Swaps</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon success">✓</div>
+          <div class="stat-info">
+            <div id="stat-completed-swaps" class="stat-value">0</div>
+            <div class="stat-label">Completed Swaps</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-info">
+            <div id="stat-total-skills" class="stat-value">0</div>
+            <div class="stat-label">Catalog Skills</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Navigation Tabs -->
+      <nav class="tab-nav" style="margin-top: 2rem;">
+        <button class="tab-btn active" data-tab="tab-users">Member Management</button>
+        <button class="tab-btn" data-tab="tab-skills">Skills Catalog Moderation</button>
+        <button class="tab-btn" data-tab="tab-swaps">Swap Monitoring</button>
+        <button class="tab-btn" data-tab="tab-announcements">Announcements</button>
+        <button class="tab-btn" data-tab="tab-logs">Audit Logs</button>
+      </nav>
+
+      <!-- Tab 1: Member Accounts Management -->
+      <section id="tab-users" class="admin-tab-pane">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 700;">Community Members</h2>
+            <div style="display: flex; gap: 0.5rem; max-width: 320px; width: 100%;">
+              <input type="text" id="admin-user-search" class="form-control" placeholder="Search by name, email, city...">
+            </div>
+          </div>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--color-border); color: var(--color-text-muted);">
+                  <th style="padding: 0.75rem;">Name</th>
+                  <th style="padding: 0.75rem;">Email</th>
+                  <th style="padding: 0.75rem;">Role</th>
+                  <th style="padding: 0.75rem;">Visibility</th>
+                  <th style="padding: 0.75rem;">Status</th>
+                  <th style="padding: 0.75rem; text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body">
+                <tr><td colspan="6" style="text-align: center; padding: 2rem;"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Skills Catalog Moderation -->
+      <section id="tab-skills" class="admin-tab-pane" style="display: none;">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 700;">Global Skills Catalog</h2>
+            <button id="admin-add-skill-btn" class="btn btn-primary btn-sm">+ Add Catalog Skill</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--color-border); color: var(--color-text-muted);">
+                  <th style="padding: 0.75rem;">Skill Name</th>
+                  <th style="padding: 0.75rem;">Category</th>
+                  <th style="padding: 0.75rem;">Description</th>
+                  <th style="padding: 0.75rem; text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-skills-table-body">
+                <tr><td colspan="4" style="text-align: center; padding: 2rem;"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 3: Swap Monitoring -->
+      <section id="tab-swaps" class="admin-tab-pane" style="display: none;">
+        <div class="card">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Platform Swap Exchanges</h2>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--color-border); color: var(--color-text-muted);">
+                  <th style="padding: 0.75rem;">Swap ID</th>
+                  <th style="padding: 0.75rem;">Requester</th>
+                  <th style="padding: 0.75rem;">Receiver</th>
+                  <th style="padding: 0.75rem;">Exchange Details</th>
+                  <th style="padding: 0.75rem;">Status</th>
+                  <th style="padding: 0.75rem;">Created</th>
+                </tr>
+              </thead>
+              <tbody id="admin-swaps-table-body">
+                <tr><td colspan="6" style="text-align: center; padding: 2rem;"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Platform Announcements -->
+      <section id="tab-announcements" class="admin-tab-pane" style="display: none;">
+        <div class="card" style="max-width: 680px;">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Broadcast Platform Announcement</h2>
+          <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Send a community-wide update visible across all registered member accounts.
+          </p>
+
+          <form id="admin-announcement-form">
+            <div class="form-group">
+              <label for="announcement-title" class="form-label">Announcement Title</label>
+              <input type="text" id="announcement-title" class="form-control" placeholder="e.g. Platform Maintenance / New Feature Release" required>
+            </div>
+
+            <div class="form-group">
+              <label for="announcement-content" class="form-label">Message Details</label>
+              <textarea id="announcement-content" class="form-control" rows="4" placeholder="Enter message text..." required></textarea>
+            </div>
+
+            <button type="submit" id="btn-publish-announcement" class="btn btn-primary">
+              📢 Publish Announcement
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Tab 5: Audit Logs -->
+      <section id="tab-logs" class="admin-tab-pane" style="display: none;">
+        <div class="card">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Administrative Audit Trail</h2>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+              <thead>
+                <tr style="border-bottom: 2px solid var(--color-border); color: var(--color-text-muted);">
+                  <th style="padding: 0.75rem;">Timestamp</th>
+                  <th style="padding: 0.75rem;">Admin</th>
+                  <th style="padding: 0.75rem;">Action</th>
+                  <th style="padding: 0.75rem;">Target</th>
+                  <th style="padding: 0.75rem;">IP Address</th>
+                </tr>
+              </thead>
+              <tbody id="admin-audit-table-body">
+                <tr><td colspan="5" style="text-align: center; padding: 2rem;"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 SkillSwap Administration Portal.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

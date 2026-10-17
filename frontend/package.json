@@ -1,0 +1,9 @@
+{
+  "name": "skillswap-frontend",
+  "version": "1.0.0",
+  "description": "Frontend static files for SkillSwap",
+  "scripts": {
+    "dev": "npx -y serve . -l 3000",
+    "start": "npx -y serve . -l 3000"
+  }
+}

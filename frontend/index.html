@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SkillSwap - Connect with peers to trade skills, learn collaboratively, and grow your abilities without spending money.">
+  <title>SkillSwap - Peer-to-Peer Skill Exchange Platform</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        ⚡ Skill<span>Swap</span>
+      </a>
+
+      <button class="menu-toggle-btn" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="discover.html" class="nav-link">Discover Skills</a></li>
+        <li><a href="my-swaps.html" class="nav-link">My Swaps</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-outline btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Sign Up Free</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1 class="hero-title">
+          Exchange Skills.<br>
+          <span>Learn Without Limits.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Connect with creators, programmers, musicians, and designers. Trade your expertise for the skills you've always wanted to master — zero money required.
+        </p>
+        <div class="hero-cta">
+          <a href="discover.html" class="btn btn-primary">Browse Skills Catalog</a>
+          <a href="register.html" class="btn btn-outline">Join the Community</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section style="padding: 4rem 0; background: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">How SkillSwap Works</h2>
+          <p class="section-subtitle">Three easy steps to start your skill trading journey</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+          <div class="card" style="text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎯</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">1. List Your Skills</h3>
+            <p style="color: var(--color-text-muted); font-size: 0.95rem;">
+              Add what you can teach and what you want to learn to your customized profile.
+            </p>
+          </div>
+
+          <div class="card" style="text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤝</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">2. Connect & Match</h3>
+            <p style="color: var(--color-text-muted); font-size: 0.95rem;">
+              Discover compatible partners with complementary skill sets and send a swap request.
+            </p>
+          </div>
+
+          <div class="card" style="text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🚀</div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">3. Teach & Learn</h3>
+            <p style="color: var(--color-text-muted); font-size: 0.95rem;">
+              Schedule sessions, share knowledge, and leave verified ratings after successful swaps.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Skills Section -->
+    <section style="padding: 4rem 0;">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Popular Skills in the Community</h2>
+          <p class="section-subtitle">Explore what peers are learning and teaching right now</p>
+        </div>
+
+        <div id="featured-skills-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <!-- Dynamically populated by home.js -->
+        </div>
+
+        <div style="text-align: center; margin-top: 2.5rem;">
+          <a href="discover.html" class="btn btn-outline">Explore All Available Skills →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <div class="nav-brand" style="margin-bottom: 0.5rem;">⚡ Skill<span>Swap</span></div>
+          <p style="color: var(--color-text-muted); font-size: 0.9rem; max-width: 320px;">
+            The collaborative learning network where knowledge is the universal currency.
+          </p>
+        </div>
+        <div style="display: flex; gap: 2.5rem; flex-wrap: wrap;">
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Explore</h4>
+            <ul style="list-style: none; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.4rem;">
+              <li><a href="discover.html" style="color: var(--color-text-muted);">Browse Skills</a></li>
+              <li><a href="my-swaps.html" style="color: var(--color-text-muted);">My Swaps</a></li>
+              <li><a href="dashboard.html" style="color: var(--color-text-muted);">Dashboard</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;">Account</h4>
+            <ul style="list-style: none; font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.4rem;">
+              <li><a href="login.html" style="color: var(--color-text-muted);">Sign In</a></li>
+              <li><a href="register.html" style="color: var(--color-text-muted);">Create Account</a></li>
+              <li><a href="admin.html" style="color: var(--color-text-muted);">Admin Portal</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 SkillSwap. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

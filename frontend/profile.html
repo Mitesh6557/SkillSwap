@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Manage your SkillSwap profile, skills portfolio, and availability.">
+  <title>User Profile - SkillSwap</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/profile.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        ⚡ Skill<span>Swap</span>
+      </a>
+
+      <button class="menu-toggle-btn" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="discover.html" class="nav-link">Discover Skills</a></li>
+        <li><a href="my-swaps.html" class="nav-link">My Swaps</a></li>
+        <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions"></div>
+    </div>
+  </header>
+
+  <main class="profile-layout">
+    <div class="container">
+      <!-- Profile Header Showcase Card -->
+      <div class="profile-header-card">
+        <div class="profile-banner"></div>
+        <div class="profile-details">
+          <div class="profile-avatar-wrapper">
+            <div id="profile-avatar" class="profile-avatar-lg">U</div>
+            <label id="avatar-upload-label" for="avatar-file-input" class="btn btn-secondary btn-sm" style="display:none; position:absolute; bottom:0; right:0; border-radius:50%; width:36px; height:36px; padding:0; align-items:center; justify-content:center; cursor:pointer;" title="Change Photo">
+              📷
+            </label>
+            <input type="file" id="avatar-file-input" accept="image/png, image/jpeg, image/webp" style="display:none;">
+          </div>
+
+          <div class="profile-info">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <h1 id="profile-name" class="profile-name">Loading Profile...</h1>
+              <span id="profile-visibility-badge" class="badge badge-success">Public</span>
+            </div>
+            <p id="profile-location" class="profile-location">📍 Remote</p>
+            <p id="profile-availability" style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 0.5rem;">🕒 Availability: Flexible</p>
+            <p id="profile-bio" style="font-size: 0.95rem; color: var(--color-text-main); margin-top: 0.25rem;"></p>
+          </div>
+
+          <div id="profile-action-btn"></div>
+        </div>
+      </div>
+
+      <!-- Profile Edit Form Card (Visible only to owner) -->
+      <div id="edit-profile-card" class="card" style="display: none; margin-bottom: 2rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">
+          ✏️ Edit Profile Information
+        </h2>
+        <form id="edit-profile-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-name" class="form-label">Full Name</label>
+              <input type="text" id="edit-name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-location" class="form-label">Location (City, Country)</label>
+              <input type="text" id="edit-location" class="form-control" placeholder="e.g. Toronto, Canada">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-availability" class="form-label">Typical Availability</label>
+              <input type="text" id="edit-availability" class="form-control" placeholder="e.g. Weekends, Tuesday evenings">
+            </div>
+            <div class="form-group">
+              <label for="edit-visibility" class="form-label">Profile Visibility</label>
+              <select id="edit-visibility" class="form-control">
+                <option value="1">Public (Visible in search)</option>
+                <option value="0">Private (Hidden from directory)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-bio" class="form-label">About Me / Bio</label>
+            <textarea id="edit-bio" class="form-control" rows="3" placeholder="Share your background, passions, and what drives you to learn..."></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <button type="submit" class="btn btn-primary" id="save-profile-btn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Skills Split Grid -->
+      <div class="skills-section-grid">
+        <!-- Offered Skills -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 style="font-size: 1.2rem; font-weight: 700;">🎓 Skills I Can Teach</h2>
+              <p style="font-size: 0.85rem; color: var(--color-text-muted);">Skills you offer in reciprocal exchanges</p>
+            </div>
+            <button id="add-offered-skill-btn" class="btn btn-primary btn-sm" style="display: none;">+ Add Skill</button>
+          </div>
+          <div id="offered-skills-list" class="skills-pill-group">
+            <p style="color: var(--color-text-muted);">Loading skills...</p>
+          </div>
+        </div>
+
+        <!-- Wanted Skills -->
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 style="font-size: 1.2rem; font-weight: 700;">🎯 Skills I Want to Learn</h2>
+              <p style="font-size: 0.85rem; color: var(--color-text-muted);">Subjects you are eager to learn from peers</p>
+            </div>
+            <button id="add-wanted-skill-btn" class="btn btn-primary btn-sm" style="display: none;">+ Add Skill</button>
+          </div>
+          <div id="wanted-skills-list" class="skills-pill-group">
+            <p style="color: var(--color-text-muted);">Loading skills...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="card" style="margin-top: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h2 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;">
+              ⭐ Member Ratings & Feedback
+            </h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-muted);">Verified reviews from completed skill swaps</p>
+          </div>
+          <div id="profile-rating-summary"></div>
+        </div>
+
+        <div id="reviews-list">
+          <p style="color: var(--color-text-muted);">Loading reviews...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 SkillSwap. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

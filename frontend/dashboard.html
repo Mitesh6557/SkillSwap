@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SkillSwap user dashboard with active exchanges and learning metrics.">
+  <title>Dashboard - SkillSwap</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="nav-brand">
+        ⚡ Skill<span>Swap</span>
+      </a>
+
+      <button class="menu-toggle-btn" aria-label="Toggle navigation">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="discover.html" class="nav-link">Discover Skills</a></li>
+        <li><a href="my-swaps.html" class="nav-link">My Swaps</a></li>
+        <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions"></div>
+    </div>
+  </header>
+
+  <main class="dashboard-layout">
+    <div class="container">
+      <div class="dashboard-header">
+        <div class="dashboard-welcome">
+          <h1 id="welcome-message">Hello, Member!</h1>
+          <p>Here is a summary of your active skill exchanges and activity.</p>
+        </div>
+        <div>
+          <a href="discover.html" class="btn btn-primary">+ Propose New Swap</a>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🤝</div>
+          <div class="stat-info">
+            <div id="stat-active-swaps" class="stat-value">0</div>
+            <div class="stat-label">Active Exchanges</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon accent">✨</div>
+          <div class="stat-info">
+            <div id="stat-completed-swaps" class="stat-value">0</div>
+            <div class="stat-label">Completed Swaps</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon success">🎓</div>
+          <div class="stat-info">
+            <div id="stat-skills-offered" class="stat-value">0</div>
+            <div class="stat-label">Offered Skills</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon warning">⭐</div>
+          <div class="stat-info">
+            <div id="stat-community-rating" class="stat-value">5.0</div>
+            <div class="stat-label">Average Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Layout Grid -->
+      <div class="dashboard-grid">
+        <!-- Recent Swaps Section -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h2 class="section-card-title">Recent Swap Proposals</h2>
+            <a href="my-swaps.html" class="btn btn-outline btn-sm">View All</a>
+          </div>
+
+          <div id="dashboard-swaps-preview">
+            <p style="color: var(--color-text-muted); padding: 1.5rem 0;">Checking for active exchanges...</p>
+          </div>
+        </div>
+
+        <!-- Quick Profile & Actions Card -->
+        <div class="section-card">
+          <h2 class="section-card-title" style="margin-bottom: 1rem;">Quick Actions</h2>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a href="discover.html" class="btn btn-outline" style="justify-content: flex-start;">
+              🔍 Browse Available Skills
+            </a>
+            <a href="profile.html" class="btn btn-outline" style="justify-content: flex-start;">
+              👤 Manage Profile & Skills
+            </a>
+            <a href="notifications.html" class="btn btn-outline" style="justify-content: flex-start;">
+              🔔 Check Notifications
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 SkillSwap. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      auth.requireAuth();
+
+      const user = auth.getUser();
+      if (user) {
+        document.getElementById('welcome-message').textContent = `Hello, ${user.name}!`;
+      }
+
+      try {
+        // Fetch User Profile for skills offered count and community rating
+        const profileRes = await api.get(`/users/${user.id}`);
+        const profile = profileRes.data;
+        if (profile) {
+          document.getElementById('stat-skills-offered').textContent = profile.offered_skills?.length || 0;
+          document.getElementById('stat-community-rating').textContent = profile.avg_rating ? `★ ${profile.avg_rating}` : '5.0';
+        }
+
+        // Fetch User Swaps
+        const res = await api.get('/swaps');
+        const swaps = res.data || [];
+
+        const activeCount = swaps.filter(s => s.status === 'pending' || s.status === 'accepted').length;
+        const completedCount = swaps.filter(s => s.status === 'completed').length;
+
+        document.getElementById('stat-active-swaps').textContent = activeCount;
+        document.getElementById('stat-completed-swaps').textContent = completedCount;
+
+        const previewContainer = document.getElementById('dashboard-swaps-preview');
+        if (swaps.length === 0) {
+          previewContainer.innerHTML = `
+            <div style="text-align: center; padding: 2rem 0;">
+              <p style="color: var(--color-text-muted); margin-bottom: 1rem;">No recent swap proposals.</p>
+              <a href="discover.html" class="btn btn-primary btn-sm">Find an Exchange Partner</a>
+            </div>
+          `;
+        } else {
+          previewContainer.innerHTML = swaps.slice(0, 4).map(s => `
+            <div class="swap-item">
+              <div class="swap-user-info">
+                <div class="avatar-circle" style="width:36px; height:36px; font-size:0.9rem;">
+                  ${ui.getAvatarInitials(s.requester_name)}
+                </div>
+                <div>
+                  <div style="font-weight: 600; font-size: 0.95rem;">${s.offered_skill_name} ➔ ${s.requested_skill_name}</div>
+                  <div style="font-size: 0.8rem; color: var(--color-text-muted);">Partner: ${s.requester_id === user.id ? s.receiver_name : s.requester_name}</div>
+                </div>
+              </div>
+              <span class="badge badge-${s.status === 'completed' ? 'success' : s.status === 'accepted' ? 'primary' : 'warning'}">
+                ${s.status}
+              </span>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err);
+      }
+    });
+  </script>
+</body>
+</html>
