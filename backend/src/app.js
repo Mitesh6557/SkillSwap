@@ -75,7 +75,7 @@ app.use('/uploads', express.static(uploadsPath));
 
 // 3.1 Static Frontend Serving (Enables opening via http://localhost:5050 directly)
 const frontendPath = path.resolve(__dirname, '../../frontend');
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, { extensions: ['html'] }));
 
 // 4. API Health Check
 app.get('/api/health', (req, res) => {

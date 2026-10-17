@@ -88,21 +88,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             .map((s) => `<span class="skill-tag wanted" style="font-size: 0.75rem;">${s.name}</span>`)
             .join(' ');
 
+          const profileBase = window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile';
+          const profileUrl = `${profileBase}?id=${user.id}`;
+
           return `
             <div class="user-card">
               <div class="user-card-header">
-                <div class="avatar-circle">${initials}</div>
-                <div class="user-card-info" style="flex: 1;">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <h3>${user.name}</h3>
-                    ${
-                      user.avg_rating
-                        ? `<span class="badge badge-warning" style="font-size: 0.75rem;">★ ${user.avg_rating} (${user.review_count})</span>`
-                        : ''
-                    }
+                <a href="${profileUrl}" data-user-id="${user.id}" class="user-card-profile-link" onclick="sessionStorage.setItem('selected_profile_id', '${user.id}')" style="display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit; flex: 1;">
+                  <div class="avatar-circle">${initials}</div>
+                  <div class="user-card-info" style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                      <h3 style="margin: 0; color: var(--color-text-main);">${user.name}</h3>
+                      ${
+                        user.avg_rating
+                          ? `<span class="badge badge-warning" style="font-size: 0.75rem;">★ ${user.avg_rating} (${user.review_count})</span>`
+                          : ''
+                      }
+                    </div>
+                    <p style="margin: 0.25rem 0 0 0;">📍 ${user.location || 'Remote'} &bull; 🕒 ${user.availability || 'Flexible'}</p>
                   </div>
-                  <p>📍 ${user.location || 'Remote'} &bull; 🕒 ${user.availability || 'Flexible'}</p>
-                </div>
+                </a>
               </div>
 
               <p class="user-card-bio">${user.bio || 'SkillSwap community member eager to learn and exchange expertise.'}</p>
@@ -124,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               </div>
 
               <div class="user-card-footer" style="display: flex; gap: 0.5rem;">
-                <a href="profile.html?id=${user.id}" class="btn btn-outline btn-sm" style="flex: 1;">View Profile</a>
+                <a href="${profileUrl}" data-user-id="${user.id}" class="btn btn-outline btn-sm" onclick="sessionStorage.setItem('selected_profile_id', '${user.id}')" style="flex: 1; text-align: center;">View Profile</a>
                 ${
                   !isSelf
                     ? `<button class="btn btn-primary btn-sm" style="flex: 1;" onclick="openSwapProposalModal(${user.id}, '${encodeURIComponent(user.name)}')">✨ Propose Swap</button>`
@@ -303,4 +308,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   fetchAndRenderUsers();
+
+  // Auto-open swap proposal modal if navigated with ?proposeUser=ID
+  const proposeUserId = initialParams.get('proposeUser');
+  if (proposeUserId) {
+    try {
+      const userRes = await api.get(`/users/${proposeUserId}`);
+      if (userRes.data) {
+        openSwapProposalModal(userRes.data.id, encodeURIComponent(userRes.data.name));
+      }
+    } catch (e) {
+      console.warn('Could not auto-open swap proposal modal:', e);
+    }
+  }
 });

@@ -5,18 +5,59 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const targetUserId = urlParams.get('id');
+  const hashParams = new URLSearchParams(window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash);
 
-  const currentUser = auth.getUser();
-  const userIdToFetch = targetUserId || currentUser?.id;
+  let rawId = urlParams.get('id') || urlParams.get('userId') || urlParams.get('user_id')
+    || hashParams.get('id') || hashParams.get('userId') || hashParams.get('user_id');
 
-  if (!userIdToFetch) {
-    ui.showToast('Please log in to view profiles.', 'warning');
-    setTimeout(() => (window.location.href = 'login.html'), 1000);
-    return;
+  // If query string was stripped by a static server cleanUrls redirect, restore from session
+  const sessionProfileId = sessionStorage.getItem('selected_profile_id');
+  if (!rawId && sessionProfileId) {
+    rawId = sessionProfileId;
+    sessionStorage.removeItem('selected_profile_id');
+    const currentPath = window.location.pathname;
+    window.history.replaceState({}, '', `${currentPath}?id=${rawId}`);
   }
 
-  const isOwnProfile = currentUser && String(currentUser.id) === String(userIdToFetch);
+  const hasIdParam = Boolean(rawId) || urlParams.has('id') || urlParams.has('userId') || urlParams.has('user_id');
+  const currentUser = auth.getUser();
+  let userIdToFetch = null;
+
+  console.log(`[Profile Navigation] Initialized: rawId=${rawId}, hasIdParam=${hasIdParam}, CurrentURL=${window.location.href}`);
+
+  if (hasIdParam) {
+    // Explicit ID provided: validate it strictly
+    const parsedId = parseInt(rawId, 10);
+    if (!rawId || isNaN(parsedId) || parsedId <= 0) {
+      // Invalid user ID provided - handle gracefully without defaulting to logged-in user
+      const container = document.querySelector('.profile-layout .container');
+      if (container) {
+        const discoverBase = window.location.pathname.endsWith('.html') ? 'discover.html' : 'discover';
+        container.innerHTML = `
+          <div class="card" style="text-align: center; padding: 3rem; margin: 2rem auto; max-width: 600px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Invalid Profile Request</h2>
+            <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">The requested user profile ID is invalid or missing.</p>
+            <a href="${discoverBase}" class="btn btn-primary">Browse Exchange Partners</a>
+          </div>
+        `;
+      }
+      return;
+    }
+    userIdToFetch = parsedId;
+  } else {
+    // No ID parameter: this is "My Profile" navigation
+    if (!currentUser || !currentUser.id) {
+      ui.showToast('Please log in to view your profile.', 'warning');
+      const loginBase = window.location.pathname.endsWith('.html') ? 'login.html' : 'login';
+      setTimeout(() => (window.location.href = loginBase), 1000);
+      return;
+    }
+    userIdToFetch = currentUser.id;
+  }
+
+  const isOwnProfile = currentUser && Number(currentUser.id) === Number(userIdToFetch);
+  console.log(`[Profile Navigation] Selected target: userIdToFetch=${userIdToFetch}, isOwnProfile=${isOwnProfile}`);
 
   async function loadProfile() {
     try {
@@ -54,24 +95,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
 
-      // 2. Setup Owner Controls
+      // 2. Setup Owner Controls vs Visitor View
+      const avatarUploadLabel = document.getElementById('avatar-upload-label');
+      const editProfileCard = document.getElementById('edit-profile-card');
+      const addOfferedBtn = document.getElementById('add-offered-skill-btn');
+      const addWantedBtn = document.getElementById('add-wanted-skill-btn');
+      const actionBtn = document.getElementById('profile-action-btn');
+
       if (isOwnProfile) {
-        document.getElementById('avatar-upload-label').style.display = 'flex';
-        document.getElementById('edit-profile-card').style.display = 'block';
-        document.getElementById('add-offered-skill-btn').style.display = 'inline-flex';
-        document.getElementById('add-wanted-skill-btn').style.display = 'inline-flex';
+        if (avatarUploadLabel) avatarUploadLabel.style.display = 'flex';
+        if (editProfileCard) editProfileCard.style.display = 'block';
+        if (addOfferedBtn) addOfferedBtn.style.display = 'inline-flex';
+        if (addWantedBtn) addWantedBtn.style.display = 'inline-flex';
+        if (actionBtn) actionBtn.innerHTML = '';
 
         // Pre-fill edit form
-        document.getElementById('edit-name').value = user.name || '';
-        document.getElementById('edit-location').value = user.location || '';
-        document.getElementById('edit-availability').value = user.availability || '';
-        document.getElementById('edit-visibility').value = user.is_public ? '1' : '0';
-        document.getElementById('edit-bio').value = user.bio || '';
+        const editName = document.getElementById('edit-name');
+        const editLocation = document.getElementById('edit-location');
+        const editAvailability = document.getElementById('edit-availability');
+        const editVisibility = document.getElementById('edit-visibility');
+        const editBio = document.getElementById('edit-bio');
+
+        if (editName) editName.value = user.name || '';
+        if (editLocation) editLocation.value = user.location || '';
+        if (editAvailability) editAvailability.value = user.availability || '';
+        if (editVisibility) editVisibility.value = user.is_public ? '1' : '0';
+        if (editBio) editBio.value = user.bio || '';
       } else {
-        const actionBtn = document.getElementById('profile-action-btn');
+        if (avatarUploadLabel) avatarUploadLabel.style.display = 'none';
+        if (editProfileCard) editProfileCard.style.display = 'none';
+        if (addOfferedBtn) addOfferedBtn.style.display = 'none';
+        if (addWantedBtn) addWantedBtn.style.display = 'none';
+
         if (actionBtn) {
+          const discoverBase = window.location.pathname.endsWith('.html') ? 'discover.html' : 'discover';
           actionBtn.innerHTML = `
-            <a href="discover.html" class="btn btn-primary" onclick="openSwapProposalModal(${user.id}, '${encodeURIComponent(user.name)}'); return false;">
+            <a href="${discoverBase}?proposeUser=${user.id}" class="btn btn-primary">
               ✨ Propose Skill Swap
             </a>
           `;
@@ -128,14 +187,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       // 5. Render Reviews
       loadReviews(user.id);
     } catch (err) {
-      document.querySelector('.profile-layout .container').innerHTML = `
-        <div class="card" style="text-align: center; padding: 3rem;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
-          <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Access Restricted</h2>
-          <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">${err.message || 'This profile is private or does not exist.'}</p>
-          <a href="discover.html" class="btn btn-primary">Browse Public Members</a>
-        </div>
-      `;
+      const container = document.querySelector('.profile-layout .container');
+      if (container) {
+        container.innerHTML = `
+          <div class="card" style="text-align: center; padding: 3rem; margin: 2rem auto; max-width: 600px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Profile Unavailable</h2>
+            <p style="color: var(--color-text-muted); margin-bottom: 1.5rem;">${err.message || 'This profile is private or does not exist.'}</p>
+            <a href="${window.location.pathname.endsWith('.html') ? 'discover.html' : 'discover'}" class="btn btn-primary">Browse Public Members</a>
+          </div>
+        `;
+      }
     }
   }
 

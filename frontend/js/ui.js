@@ -90,7 +90,7 @@ const ui = {
         <a href="notifications.html" class="btn btn-outline btn-sm" title="Notifications" id="nav-notifications-link">
           🔔 <span id="nav-unread-badge" style="display:none; background:var(--color-danger); color:#fff; border-radius:10px; padding:1px 5px; font-size:10px;">0</span>
         </a>
-        <a href="profile.html" class="btn btn-outline btn-sm" style="display: flex; align-items: center; gap: 0.4rem;">
+        <a href="${window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile'}" class="btn btn-outline btn-sm" onclick="sessionStorage.removeItem('selected_profile_id')" style="display: flex; align-items: center; gap: 0.4rem;">
           <span style="display:inline-block; width:24px; height:24px; border-radius:50%; background:var(--color-primary); color:#fff; text-align:center; font-size:11px; line-height:24px;">${initials}</span>
           ${user?.name?.split(' ')[0] || 'Profile'}
         </a>

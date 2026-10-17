@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                   <span class="badge ${isSender ? 'badge-accent' : 'badge-primary'}">${isSender ? 'Outgoing' : 'Incoming'}</span>
                   <h3 style="font-size: 1.15rem; font-weight: 700;">
-                    ${isSender ? 'To: ' : 'From: '} <a href="profile.html?id=${partnerId}">${partnerName}</a>
+                    ${isSender ? 'To: ' : 'From: '} <a href="${window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile'}?id=${partnerId}" onclick="sessionStorage.setItem('selected_profile_id', '${partnerId}')">${partnerName}</a>
                   </h3>
                 </div>
                 <div style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.25rem;">
