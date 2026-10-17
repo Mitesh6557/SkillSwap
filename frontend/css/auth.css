@@ -1,6 +1,6 @@
 /**
  * SkillSwap - Authentication Page Styles (Login & Register)
- * Polished, centered auth cards with refined inputs and demo credentials
+ * Dark Modern SaaS Theme
  */
 
 .auth-wrapper {
@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 1.5rem;
-  background: radial-gradient(ellipse at 50% 20%, rgba(79, 70, 229, 0.04) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 50% 20%, rgba(124, 92, 252, 0.14) 0%, transparent 70%);
 }
 
 .auth-card {
@@ -19,7 +19,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: 2.25rem;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl), 0 0 25px rgba(124, 92, 252, 0.15);
 }
 
 .auth-header {
@@ -32,7 +32,7 @@
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--color-text-main);
+  color: #ffffff;
   margin-bottom: 0.35rem;
 }
 
@@ -49,7 +49,7 @@
   display: block;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--color-text-main);
+  color: var(--color-text-secondary);
   margin-bottom: 0.35rem;
 }
 
@@ -59,15 +59,16 @@
   font-family: var(--font-sans);
   font-size: 0.9rem;
   color: var(--color-text-main);
-  background-color: #ffffff;
-  border: 1px solid var(--color-border-strong);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
   outline: none;
 }
 
 .form-control:focus {
   border-color: var(--color-border-focus);
+  background-color: var(--color-surface);
   box-shadow: var(--focus-ring);
 }
 
@@ -94,9 +95,10 @@
 
 .auth-footer a {
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-secondary-purple);
 }
 
 .auth-footer a:hover {
+  color: #ffffff;
   text-decoration: underline;
 }

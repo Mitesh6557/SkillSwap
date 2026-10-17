@@ -1,11 +1,12 @@
 /**
  * SkillSwap - Responsive Media Queries & Mobile Optimizations
+ * Dark Modern SaaS Theme
  */
 
 /* Mobile Nav Toggle Button */
 .menu-toggle-btn {
   display: none;
-  background: var(--color-surface-subtle);
+  background: var(--color-surface-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-size: 1.2rem;
@@ -17,7 +18,8 @@
 }
 
 .menu-toggle-btn:hover {
-  background: var(--color-border);
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-strong);
 }
 
 /* Tablet Screens (<= 992px) */
@@ -49,11 +51,11 @@
     top: 68px;
     left: 0;
     right: 0;
-    background: var(--color-surface);
+    background: var(--color-surface-elevated);
     flex-direction: column;
     padding: 1rem 1.5rem 1.5rem;
     border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
     gap: 0.35rem;
   }
 
