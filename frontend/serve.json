@@ -1,3 +1,15 @@
 {
-  "cleanUrls": false
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/home", "destination": "/index.html" },
+    { "source": "/discover", "destination": "/discover.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/my-swaps", "destination": "/my-swaps.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/notifications", "destination": "/notifications.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/register", "destination": "/register.html" }
+  ]
 }
