@@ -1,0 +1,25 @@
+{
+  "name": "skillswap",
+  "version": "1.0.0",
+  "description": "SkillSwap - A peer-to-peer Skill Exchange Platform",
+  "private": true,
+  "scripts": {
+    "start": "npm --prefix backend start",
+    "dev": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "seed": "npm --prefix backend run seed",
+    "test": "npm --prefix backend run test",
+    "install:backend": "npm --prefix backend install",
+    "install:all": "npm run install:backend"
+  },
+  "keywords": [
+    "skill-swap",
+    "skill-exchange",
+    "nodejs",
+    "express",
+    "mysql",
+    "vanilla-js"
+  ],
+  "author": "",
+  "license": "ISC"
+}
