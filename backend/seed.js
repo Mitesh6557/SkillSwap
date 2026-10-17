@@ -54,25 +54,23 @@ async function runSeeder() {
 
     // 3. Read and execute schema.sql
     const schemaPath = path.join(__dirname, 'database', 'schema.sql');
-    if (fs.existsSync(schemaPath)) {
-      console.log('📄 Executing database/schema.sql...');
-      const schemaSql = fs.readFileSync(schemaPath, 'utf8');
-      await connection.query(schemaSql);
-      console.log('✅ Tables created or verified successfully.');
-    } else {
-      console.warn('⚠️ schema.sql not found at:', schemaPath);
+    if (!fs.existsSync(schemaPath)) {
+      throw new Error(`Critical: schema.sql not found at '${schemaPath}'. Cannot initialize database tables.`);
     }
+    console.log('📄 Executing database/schema.sql...');
+    const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+    await connection.query(schemaSql);
+    console.log('✅ Tables created or verified successfully.');
 
     // 4. Read and execute seed.sql
     const seedPath = path.join(__dirname, 'database', 'seed.sql');
-    if (fs.existsSync(seedPath)) {
-      console.log('🌱 Executing database/seed.sql...');
-      const seedSql = fs.readFileSync(seedPath, 'utf8');
-      await connection.query(seedSql);
-      console.log('✅ Initial seed data populated successfully.');
-    } else {
-      console.warn('⚠️ seed.sql not found at:', seedPath);
+    if (!fs.existsSync(seedPath)) {
+      throw new Error(`Critical: seed.sql not found at '${seedPath}'. Cannot seed initial platform data.`);
     }
+    console.log('🌱 Executing database/seed.sql...');
+    const seedSql = fs.readFileSync(seedPath, 'utf8');
+    await connection.query(seedSql);
+    console.log('✅ Initial seed data populated successfully.');
 
     console.log('----------------------------------------------------');
     console.log('🎉 Database seeding completed safely with zero errors!');
@@ -86,6 +84,10 @@ async function runSeeder() {
     console.error('\n💡 Troubleshooting Tips:');
     console.error('1. Make sure your MySQL service is running locally.');
     console.error('2. Check backend/.env to ensure DB_USER, DB_PASSWORD, and DB_PORT match your MySQL settings.');
+    if (connection) {
+      await connection.end();
+    }
+    process.exit(1);
   } finally {
     if (connection) {
       await connection.end();
