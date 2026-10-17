@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                   <p style="font-weight: 600; font-size: 1rem;">${swap.offered_skill_name}</p>
                 </div>
                 <div>
-                  <small style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700; color: #0e7490;">Requested Skill:</small>
+                  <small style="text-transform: uppercase; font-size: 0.75rem; font-weight: 700; color: var(--color-accent);">Requested Skill:</small>
                   <p style="font-weight: 600; font-size: 1rem;">${swap.requested_skill_name}</p>
                 </div>
               </div>

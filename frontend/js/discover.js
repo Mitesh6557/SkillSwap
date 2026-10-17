@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
 
                 <div>
-                  <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: #0e7490; display: block; margin-bottom: 0.35rem;">Wants to Learn:</strong>
+                  <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-accent); display: block; margin-bottom: 0.35rem;">Wants to Learn:</strong>
                   <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
                     ${wantedPills || '<span style="font-size:0.8rem; color:var(--color-text-muted);">Open to anything</span>'}
                   </div>

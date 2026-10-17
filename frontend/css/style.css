@@ -771,3 +771,39 @@ table tr:hover td {
   padding-top: 1.5rem;
   border-top: 1px solid var(--color-border);
 }
+
+/* Accessibility & Clean Text Wrapping */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.45);
+}
+
+.card, .user-card, .swap-item, .notification-item, .stat-card {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.admin-tab-pane table {
+  min-width: 600px;
+}
+
+@media (max-width: 600px) {
+  #notifications-list .card > div {
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  #notifications-list .card > div > div:last-child {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
