@@ -158,6 +158,44 @@ async function runTests() {
     assert(false, `CSV export error: ${err.message}`);
   }
 
+  // 11. Smart Skill Matches
+  try {
+    const matches = await request('/api/matches', {
+      headers: { Authorization: `Bearer ${userToken}` },
+    });
+    assert(matches.status === 200 && Array.isArray(matches.body.data) && matches.body.data.length > 0, 'GET /api/matches calculates ranked smart skill matches');
+  } catch (err) {
+    assert(false, `GET /api/matches error: ${err.message}`);
+  }
+
+  // 12. Session Management
+  try {
+    const sessions = await request('/api/sessions', {
+      headers: { Authorization: `Bearer ${userToken}` },
+    });
+    assert(sessions.status === 200 && Array.isArray(sessions.body.data), 'GET /api/sessions returns user scheduled sessions');
+  } catch (err) {
+    assert(false, `GET /api/sessions error: ${err.message}`);
+  }
+
+  // 13. Trust & Safety Reports Reasons & Submission
+  try {
+    const reasons = await request('/api/reports/reasons');
+    assert(reasons.status === 200 && Array.isArray(reasons.body.data), 'GET /api/reports/reasons returns safety report categories');
+  } catch (err) {
+    assert(false, `GET /api/reports/reasons error: ${err.message}`);
+  }
+
+  // 14. Admin Reports Queue
+  try {
+    const reports = await request('/api/admin/reports', {
+      headers: { Authorization: `Bearer ${adminToken}` },
+    });
+    assert(reports.status === 200 && Array.isArray(reports.body.data), 'GET /api/admin/reports returns moderation reports queue');
+  } catch (err) {
+    assert(false, `GET /api/admin/reports error: ${err.message}`);
+  }
+
   console.log(`\n========================================`);
   console.log(`Test Results: ${passed} passed, ${failed} failed`);
   console.log(`========================================\n`);

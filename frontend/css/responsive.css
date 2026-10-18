@@ -188,4 +188,32 @@
   .profile-avatar-wrapper {
     margin-top: -50px;
   }
+
+  /* Modals on Small Screens */
+  .modal-backdrop {
+    padding: 0.75rem;
+  }
+
+  .modal-header {
+    padding: 1rem 1.15rem;
+  }
+
+  .modal-body {
+    padding: 1.15rem;
+  }
+
+  .modal-footer {
+    padding: 0.85rem 1.15rem;
+    flex-wrap: wrap;
+  }
+
+  .modal-footer .btn {
+    flex: 1;
+  }
+
+  .session-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
 }
+

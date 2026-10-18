@@ -62,7 +62,7 @@
       <div class="demo-credentials-box">
         <strong>Quick Demo Credentials:</strong>
         <div class="demo-buttons-row">
-          <button type="button" class="btn-demo" onclick="fillDemo('sarah.chen@example.com', 'Password123!')">Demo User</button>
+          <button type="button" class="btn-demo" onclick="fillDemo('sarah.chen@example.com', 'Password123!')">Demo User (Sarah)</button>
           <button type="button" class="btn-demo" onclick="fillDemo('admin@skillswap.com', 'Password123!')">Demo Admin</button>
         </div>
       </div>
@@ -85,11 +85,20 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/validation.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       window.fillDemo = (email, pass) => {
-        document.getElementById('email').value = email;
-        document.getElementById('password').value = pass;
+        const emailEl = document.getElementById('email');
+        const passEl = document.getElementById('password');
+        if (emailEl) {
+          emailEl.value = email;
+          validator.clearError(emailEl);
+        }
+        if (passEl) {
+          passEl.value = pass;
+          validator.clearError(passEl);
+        }
       };
 
       // If already logged in, redirect to dashboard
@@ -103,6 +112,20 @@
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Comprehensive inline validation
+        const isValid = validator.validateForm(form, {
+          '#email': {
+            required: 'Please enter your email address.',
+            email: 'Please enter a valid email address (e.g. name@example.com).'
+          },
+          '#password': {
+            required: 'Please enter your password.'
+          }
+        });
+
+        if (!isValid) return;
+
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
@@ -117,6 +140,12 @@
           }, 600);
         } catch (err) {
           ui.showToast(err.message, 'error');
+          // If backend indicates invalid credentials, highlight password field
+          if (err.message && err.message.toLowerCase().includes('password')) {
+            validator.showError('#password', err.message);
+          } else if (err.message && err.message.toLowerCase().includes('email')) {
+            validator.showError('#email', err.message);
+          }
           submitBtn.disabled = false;
           submitBtn.textContent = 'Sign In';
         }

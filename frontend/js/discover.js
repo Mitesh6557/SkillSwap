@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Modal for Proposing Swap
-  window.openSwapProposalModal = async (receiverId, encodedName) => {
+  window.openSwapProposalModal = async (receiverId, encodedName, preselectedOfferedSkillId = null, preselectedRequestedSkillId = null) => {
     const receiverName = decodeURIComponent(encodedName);
 
     if (!auth.isAuthenticated()) {
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <label class="form-label" for="modal-offered-skill">Skill You Will Teach:</label>
             <select id="modal-offered-skill" class="form-control" required>
               ${myOfferedSkills
-                .map((s) => `<option value="${s.skill_id}">${s.name} (${s.proficiency_level})</option>`)
+                .map((s) => `<option value="${s.skill_id}" ${preselectedOfferedSkillId && String(preselectedOfferedSkillId) === String(s.skill_id) ? 'selected' : ''}>${s.name} (${s.proficiency_level})</option>`)
                 .join('')}
             </select>
           </div>
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <label class="form-label" for="modal-requested-skill">Skill You Want from ${receiverName}:</label>
             <select id="modal-requested-skill" class="form-control" required>
               ${receiverOfferedSkills
-                .map((s) => `<option value="${s.skill_id}">${s.name} (${s.proficiency_level})</option>`)
+                .map((s) => `<option value="${s.skill_id}" ${preselectedRequestedSkillId && String(preselectedRequestedSkillId) === String(s.skill_id) ? 'selected' : ''}>${s.name} (${s.proficiency_level})</option>`)
                 .join('')}
             </select>
           </div>
@@ -276,6 +276,27 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Handle Form Submit
       document.getElementById('swap-proposal-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const form = document.getElementById('swap-proposal-form');
+        const validationSchema = {
+          '#modal-offered-skill': {
+            required: 'Please select a skill you will teach.'
+          },
+          '#modal-requested-skill': {
+            required: 'Please select a skill you want to learn.'
+          }
+        };
+
+        const scheduledDateInput = document.getElementById('modal-swap-date');
+        if (scheduledDateInput && scheduledDateInput.value) {
+          validationSchema['#modal-swap-date'] = {
+            futureDate: 'Proposed session date must be in the future.'
+          };
+        }
+
+        const isValid = validator.validateForm(form, validationSchema);
+        if (!isValid) return;
+
         const submitBtn = document.getElementById('modal-submit-btn');
         submitBtn.disabled = true;
         submitBtn.textContent = 'Sending...';
@@ -283,7 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const offeredSkillId = document.getElementById('modal-offered-skill').value;
         const requestedSkillId = document.getElementById('modal-requested-skill').value;
         const message = document.getElementById('modal-swap-message').value.trim();
-        const scheduledDate = document.getElementById('modal-swap-date').value || null;
+        const scheduledDate = scheduledDateInput ? scheduledDateInput.value : null;
 
         try {
           await api.post('/swaps', {
@@ -306,6 +327,213 @@ document.addEventListener('DOMContentLoaded', async () => {
       ui.showToast('Unable to initiate swap proposal: ' + err.message, 'error');
     }
   };
+
+  // --- Smart Matches Feature Implementation ---
+  const tabBtnDirectory = document.getElementById('tab-btn-directory');
+  const tabBtnSmartMatches = document.getElementById('tab-btn-smart-matches');
+  const paneDirectory = document.getElementById('pane-directory');
+  const paneSmartMatches = document.getElementById('pane-smart-matches');
+  const smartMatchesGrid = document.getElementById('smart-matches-grid');
+  const refreshMatchesBtn = document.getElementById('refresh-matches-btn');
+  const smartBadgeCount = document.getElementById('smart-badge-count');
+
+  function switchTab(target) {
+    if (target === 'smart-matches') {
+      tabBtnDirectory?.classList.remove('active');
+      tabBtnSmartMatches?.classList.add('active');
+      if (paneDirectory) paneDirectory.style.display = 'none';
+      if (paneSmartMatches) paneSmartMatches.style.display = 'block';
+      fetchAndRenderSmartMatches();
+    } else {
+      tabBtnSmartMatches?.classList.remove('active');
+      tabBtnDirectory?.classList.add('active');
+      if (paneSmartMatches) paneSmartMatches.style.display = 'none';
+      if (paneDirectory) paneDirectory.style.display = 'block';
+    }
+  }
+
+  tabBtnDirectory?.addEventListener('click', () => switchTab('directory'));
+  tabBtnSmartMatches?.addEventListener('click', () => switchTab('smart-matches'));
+  refreshMatchesBtn?.addEventListener('click', () => fetchAndRenderSmartMatches(true));
+
+  async function fetchAndRenderSmartMatches(forceRefresh = false) {
+    if (!smartMatchesGrid) return;
+
+    if (!auth.isAuthenticated()) {
+      smartMatchesGrid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 3.5rem 1.5rem; background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+          <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">Log in for Smart Matching</h3>
+          <p style="color: var(--color-text-muted); max-width: 460px; margin: 0 auto 1.5rem;">
+            Our smart matching engine analyzes reciprocal learning goals and skill profiles to find your ideal exchange partners.
+          </p>
+          <a href="login.html" class="btn btn-primary">Log In to View Matches</a>
+        </div>
+      `;
+      return;
+    }
+
+    smartMatchesGrid.innerHTML = '<div class="spinner" style="grid-column: 1/-1; margin: 3rem auto;"></div>';
+
+    try {
+      const res = await api.get('/matches?limit=30');
+      const data = res.data || {};
+      const matches = data.matches || [];
+      const userSkillsCount = data.user_skills_count || 0;
+
+      if (smartBadgeCount) {
+        if (matches.length > 0) {
+          smartBadgeCount.textContent = matches.length;
+          smartBadgeCount.style.display = 'inline-block';
+        } else {
+          smartBadgeCount.style.display = 'none';
+        }
+      }
+
+      if (userSkillsCount === 0) {
+        smartMatchesGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3.5rem 1.5rem; background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">Add Skills to Unlock Smart Matches</h3>
+            <p style="color: var(--color-text-muted); max-width: 480px; margin: 0 auto 1.5rem;">
+              You haven't added any offered or wanted skills to your profile yet. Add the skills you can teach and what you want to learn to get tailored, high-compatibility swap recommendations!
+            </p>
+            <a href="profile.html" class="btn btn-primary">Go to Profile & Add Skills</a>
+          </div>
+        `;
+        return;
+      }
+
+      if (matches.length === 0) {
+        smartMatchesGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3.5rem 1.5rem; background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">✨</div>
+            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">No High-Compatibility Matches Yet</h3>
+            <p style="color: var(--color-text-muted); max-width: 480px; margin: 0 auto 1.5rem;">
+              We couldn't find an exact reciprocal partner right now. As more members join and list skills, your smart recommendations will update automatically!
+            </p>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('tab-btn-directory').click()">Explore Public Directory</button>
+          </div>
+        `;
+        return;
+      }
+
+      const profileBase = window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile';
+
+      smartMatchesGrid.innerHTML = matches
+        .map((m) => {
+          const initials = ui.getAvatarInitials(m.name);
+          const profileUrl = `${profileBase}?id=${m.id}`;
+
+          const preselectedOfferedId = m.can_teach_skills && m.can_teach_skills.length > 0 ? m.can_teach_skills[0].skill_id : null;
+          const preselectedRequestedId = m.can_learn_skills && m.can_learn_skills.length > 0 ? m.can_learn_skills[0].skill_id : null;
+
+          const reasonsHtml = (m.reasons || [])
+            .map((r) => `<div class="reason-pill"><span>✓</span> <span>${r}</span></div>`)
+            .join('');
+
+          const canLearnPills = (m.can_learn_skills || [])
+            .map((s) => `<span class="skill-tag offered" style="font-size: 0.75rem; font-weight: 600;">${s.name} <small style="opacity:0.8">(${s.proficiency_level})</small></span>`)
+            .join(' ');
+
+          const canTeachPills = (m.can_teach_skills || [])
+            .map((s) => `<span class="skill-tag wanted" style="font-size: 0.75rem; font-weight: 600;">${s.name}</span>`)
+            .join(' ');
+
+          return `
+            <div class="user-card" style="border: 1px solid ${m.is_reciprocal ? 'rgba(124, 92, 252, 0.45)' : 'var(--color-border)'};">
+              <div class="user-card-header" style="margin-bottom: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                  <a href="${profileUrl}" class="user-card-profile-link" onclick="sessionStorage.setItem('selected_profile_id', '${m.id}')" style="display: flex; align-items: center; gap: 0.85rem; text-decoration: none; color: inherit; flex: 1;">
+                    <div class="avatar-circle">${initials}</div>
+                    <div class="user-card-info">
+                      <h3 style="margin: 0; color: #fff;">${m.name}</h3>
+                      <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: var(--color-text-muted);">
+                        📍 ${m.location || 'Remote'} &bull; 🕒 ${m.availability || 'Flexible'}
+                      </p>
+                    </div>
+                  </a>
+                  <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;">
+                    <span class="match-score-badge">
+                      ${m.match_score}% Match
+                    </span>
+                    ${m.is_reciprocal ? `<span style="font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-full); padding: 0.15rem 0.5rem; font-weight: 700;">🔄 Reciprocal</span>` : ''}
+                  </div>
+                </div>
+
+                <div class="compatibility-bar-container">
+                  <div class="compatibility-bar-fill" style="width: ${m.match_score}%;"></div>
+                </div>
+              </div>
+
+              <!-- Recommendation Reasons Box -->
+              <div class="match-reasons-box">
+                <div style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--color-primary-dark); letter-spacing: 0.5px; margin-bottom: 0.2rem;">
+                  Why You Match:
+                </div>
+                ${reasonsHtml}
+              </div>
+
+              <!-- Complementary Skills Breakdown -->
+              <div class="user-card-skills" style="margin-top: 0.5rem;">
+                ${
+                  canLearnPills
+                    ? `
+                    <div style="margin-bottom: 0.6rem;">
+                      <strong style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-accent); display: block; margin-bottom: 0.25rem;">
+                        🎓 You Can Learn:
+                      </strong>
+                      <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                        ${canLearnPills}
+                      </div>
+                    </div>
+                  `
+                    : ''
+                }
+
+                ${
+                  canTeachPills
+                    ? `
+                    <div style="margin-bottom: 0.6rem;">
+                      <strong style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-primary-dark); display: block; margin-bottom: 0.25rem;">
+                        💡 You Can Teach:
+                      </strong>
+                      <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                        ${canTeachPills}
+                      </div>
+                    </div>
+                  `
+                    : ''
+                }
+              </div>
+
+              <div class="user-card-footer" style="display: flex; gap: 0.5rem; margin-top: auto;">
+                <a href="${profileUrl}" class="btn btn-outline btn-sm" onclick="sessionStorage.setItem('selected_profile_id', '${m.id}')" style="flex: 1; text-align: center;">View Profile</a>
+                <button class="btn btn-primary btn-sm" style="flex: 1.2;" onclick="openSwapProposalModal(${m.id}, '${encodeURIComponent(m.name)}', ${preselectedOfferedId || 'null'}, ${preselectedRequestedId || 'null'})">
+                  ✨ Propose Swap
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      if (forceRefresh) {
+        ui.showToast('Smart match recommendations refreshed!', 'info');
+      }
+    } catch (err) {
+      smartMatchesGrid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; color: var(--color-danger); padding: 2rem;">
+          <p>Failed to calculate smart matches: ${err.message}</p>
+        </div>
+      `;
+    }
+  }
+
+  // Check URL hash or query param for ?tab=matches
+  if (initialParams.get('tab') === 'matches' || window.location.hash === '#matches') {
+    switchTab('smart-matches');
+  }
 
   fetchAndRenderUsers();
 

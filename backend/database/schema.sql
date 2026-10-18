@@ -194,4 +194,30 @@ CREATE TABLE IF NOT EXISTS `admin_audit_logs` (
   CONSTRAINT `fk_audit_admin` FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ----------------------------------------------------
+-- 10. Table: swap_sessions
+-- ----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `swap_sessions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `swap_id` int NOT NULL,
+  `creator_id` int NOT NULL,
+  `title` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `topic` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `session_date` datetime NOT NULL,
+  `duration_minutes` int NOT NULL DEFAULT 60,
+  `agenda` text COLLATE utf8mb4_unicode_ci,
+  `meeting_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` enum('pending','confirmed','completed','cancelled','rescheduled') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `rescheduled_from_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_sessions_swap` (`swap_id`),
+  KEY `idx_sessions_creator` (`creator_id`),
+  KEY `idx_sessions_date` (`session_date`),
+  KEY `idx_sessions_status` (`status`),
+  CONSTRAINT `fk_sessions_swap` FOREIGN KEY (`swap_id`) REFERENCES `swap_requests` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_sessions_creator` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;

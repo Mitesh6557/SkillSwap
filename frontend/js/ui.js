@@ -156,6 +156,117 @@ const ui = {
       month: 'short',
       day: 'numeric'
     });
+  },
+
+  /**
+   * Format ISO date string into date & time
+   */
+  formatDateTime(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  },
+
+  /**
+   * Universal Report Modal for Trust & Safety
+   */
+  async openReportModal({ reportedUserId = null, reportedUserName = 'User', reportedSwapId = null }) {
+    if (!window.auth || !auth.isAuthenticated()) {
+      this.showToast('Please log in to submit a safety report.', 'error');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    let reasons = [
+      'Inappropriate content or messages',
+      'Harassment or abusive behavior',
+      'No-show / Missed session',
+      'Spam / Commercial solicitation',
+      'Fake profile or misleading skills',
+      'Other'
+    ];
+
+    try {
+      const res = await api.get('/reports/reasons');
+      if (res.data) reasons = res.data;
+    } catch (e) {
+      // fallback
+    }
+
+    const optionsHtml = reasons.map(r => `<option value="${r}">${r}</option>`).join('');
+
+    const bodyHtml = `
+      <form id="report-modal-form">
+        <p style="color: var(--color-text-secondary); margin-bottom: 1rem; font-size: 0.9rem;">
+          You are reporting <strong>${reportedUserName}</strong>. Our Trust & Safety team will review this report and take appropriate moderation action.
+        </p>
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--color-text-main);">Reason for Report *</label>
+          <select id="report-reason-select" class="form-control" required style="width: 100%;">
+            <option value="" disabled selected>Select a reason...</option>
+            ${optionsHtml}
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--color-text-main);">Additional Details (Optional)</label>
+          <textarea id="report-details-input" class="form-control" rows="3" placeholder="Describe the incident or violation..." style="width: 100%;"></textarea>
+        </div>
+      </form>
+    `;
+
+    const footerHtml = `
+      <button class="btn btn-outline btn-sm" onclick="ui.closeModal()">Cancel</button>
+      <button id="btn-submit-report" class="btn btn-danger btn-sm" style="background: var(--color-danger); color: #fff;">🚩 Submit Report</button>
+    `;
+
+    this.openModal(`Report ${reportedUserName}`, bodyHtml, footerHtml);
+
+    const reasonSelect = document.getElementById('report-reason-select');
+    reasonSelect?.addEventListener('change', () => {
+      if (window.validator) validator.clearError(reasonSelect);
+    });
+
+    document.getElementById('btn-submit-report')?.addEventListener('click', async () => {
+      const detailsInput = document.getElementById('report-details-input');
+      const reason = reasonSelect?.value;
+
+      if (!reason) {
+        if (window.validator) {
+          validator.showError(reasonSelect, 'Please select a reason for reporting this user.');
+          reasonSelect.focus();
+        } else {
+          ui.showToast('Please select a report reason.', 'error');
+        }
+        return;
+      }
+
+      const submitBtn = document.getElementById('btn-submit-report');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+
+      try {
+        const payload = {
+          reason,
+          details: detailsInput?.value || null
+        };
+        if (reportedUserId) payload.reportedUserId = reportedUserId;
+        if (reportedSwapId) payload.reportedSwapId = reportedSwapId;
+
+        const res = await api.post('/reports', payload);
+        ui.closeModal();
+        ui.showToast(res.message || 'Report submitted successfully.', 'success');
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🚩 Submit Report';
+        ui.showToast(err.message || 'Failed to submit report.', 'error');
+      }
+    });
   }
 };
 

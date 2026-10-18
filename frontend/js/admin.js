@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (targetPane) targetPane.style.display = 'block';
 
       // Lazy load tab data
+      if (tab.dataset.tab === 'tab-reports') loadAdminReports();
       if (tab.dataset.tab === 'tab-skills') loadAdminSkills();
       if (tab.dataset.tab === 'tab-swaps') loadAdminSwaps();
       if (tab.dataset.tab === 'tab-logs') loadAdminLogs();
@@ -42,6 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const pendingSwapsEl = document.getElementById('stat-pending-swaps');
       const completedSwapsEl = document.getElementById('stat-completed-swaps');
       const skillsEl = document.getElementById('stat-total-skills');
+      const reportsEl = document.getElementById('stat-pending-reports');
+      const reportsBadge = document.getElementById('admin-reports-badge');
 
       if (userEl) userEl.textContent = s.totalUsers || 0;
       if (publicEl) publicEl.textContent = s.publicProfiles || 0;
@@ -49,6 +52,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (pendingSwapsEl) pendingSwapsEl.textContent = s.pendingSwaps || 0;
       if (completedSwapsEl) completedSwapsEl.textContent = s.completedSwaps || 0;
       if (skillsEl) skillsEl.textContent = s.totalSkills || 0;
+      if (reportsEl) reportsEl.textContent = s.pendingReports || 0;
+
+      if (reportsBadge) {
+        if (s.pendingReports > 0) {
+          reportsBadge.textContent = s.pendingReports;
+          reportsBadge.style.display = 'inline-block';
+        } else {
+          reportsBadge.style.display = 'none';
+        }
+      }
     } catch (err) {
       console.error('Failed to load admin stats:', err);
     }
@@ -122,6 +135,177 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 300);
   });
 
+  // --- 2.5 Trust & Safety Reports Moderation ---
+  let allAdminReports = [];
+
+  async function loadAdminReports() {
+    const tableBody = document.getElementById('admin-reports-table-body');
+    if (!tableBody) return;
+    tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;"><div class="spinner"></div></td></tr>';
+
+    try {
+      const res = await api.get('/admin/reports');
+      allAdminReports = res.data || [];
+      renderFilteredReports();
+    } catch (err) {
+      tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--color-danger); padding: 1.5rem;">Failed to load incident reports: ${err.message}</td></tr>`;
+    }
+  }
+
+  function renderFilteredReports() {
+    const tableBody = document.getElementById('admin-reports-table-body');
+    if (!tableBody) return;
+
+    const filter = document.getElementById('admin-report-filter')?.value || 'all';
+
+    const filtered = allAdminReports.filter((r) => {
+      if (filter === 'all') return true;
+      return r.status === filter;
+    });
+
+    if (filtered.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--color-text-muted);">No reports found matching status '${filter}'.</td></tr>`;
+      return;
+    }
+
+    tableBody.innerHTML = filtered
+      .map((r) => {
+        let statusBadge = '';
+        if (r.status === 'pending') {
+          statusBadge = '<span class="badge badge-warning">Pending Review</span>';
+        } else if (r.status === 'reviewed') {
+          statusBadge = '<span class="badge badge-primary">Under Review</span>';
+        } else if (r.status === 'resolved') {
+          statusBadge = '<span class="badge badge-success">Resolved</span>';
+        } else if (r.status === 'dismissed') {
+          statusBadge = '<span class="badge badge-secondary">Dismissed</span>';
+        }
+
+        const dateStr = ui.formatDateTime ? ui.formatDateTime(r.created_at) : new Date(r.created_at).toLocaleString();
+
+        const reportedActiveBadge = r.reported_user_is_active === 0
+          ? '<span class="badge badge-danger" style="font-size:0.7rem; margin-left: 0.35rem;">Suspended</span>'
+          : '<span class="badge badge-success" style="font-size:0.7rem; margin-left: 0.35rem;">Active</span>';
+
+        return `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding: 0.85rem; font-weight: 700;">#${r.id}</td>
+            <td style="padding: 0.85rem;">
+              <strong>${r.reporter_name}</strong>
+              <div style="font-size: 0.75rem; color: var(--color-text-muted);">${r.reporter_email || ''}</div>
+            </td>
+            <td style="padding: 0.85rem;">
+              <strong>${r.reported_user_name || 'N/A'}</strong> ${r.reported_user_name ? reportedActiveBadge : ''}
+              <div style="font-size: 0.75rem; color: var(--color-text-muted);">${r.reported_user_email || ''}</div>
+            </td>
+            <td style="padding: 0.85rem;">
+              <span class="badge badge-accent">${r.reason}</span>
+              ${r.swap_request_id ? `<div style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.2rem;">Swap #${r.swap_request_id}</div>` : ''}
+            </td>
+            <td style="padding: 0.85rem; max-width: 260px;">
+              <div style="font-size: 0.85rem; line-height: 1.4; color: var(--color-text-main); word-break: break-word;">${r.description}</div>
+              ${
+                r.admin_notes
+                  ? `<div style="font-size: 0.75rem; color: var(--color-accent); margin-top: 0.35rem; font-style: italic;">Admin Note: ${r.admin_notes}</div>`
+                  : ''
+              }
+            </td>
+            <td style="padding: 0.85rem;">${statusBadge}</td>
+            <td style="padding: 0.85rem; font-size: 0.8rem; color: var(--color-text-muted); white-space: nowrap;">${dateStr}</td>
+            <td style="padding: 0.85rem; text-align: right; white-space: nowrap;">
+              <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+                <button class="btn btn-outline btn-sm" onclick="openReportReviewModal(${r.id}, '${r.status}', '${encodeURIComponent(r.admin_notes || '')}')">
+                  Update
+                </button>
+                ${
+                  r.reported_user_id
+                    ? `
+                  <button class="btn ${r.reported_user_is_active === 0 ? 'btn-primary' : 'btn-danger'} btn-sm" onclick="toggleUserStatus(${r.reported_user_id}, ${r.reported_user_is_active === 0})">
+                    ${r.reported_user_is_active === 0 ? 'Activate' : 'Suspend'}
+                  </button>
+                `
+                    : ''
+                }
+              </div>
+            </td>
+          </tr>
+        `;
+      })
+      .join('');
+  }
+
+  document.getElementById('admin-report-filter')?.addEventListener('change', () => {
+    renderFilteredReports();
+  });
+
+  // Modal to Review and Update Report Status
+  window.openReportReviewModal = (reportId, currentStatus, encodedNotes) => {
+    const existingNotes = decodeURIComponent(encodedNotes);
+
+    const modalHtml = `
+      <form id="admin-report-review-form">
+        <p style="margin-bottom: 1.25rem; font-size: 0.95rem; color: var(--color-text-muted);">
+          Update moderation disposition for Report <strong>#${reportId}</strong>.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label" for="report-status-select">Report Status:</label>
+          <select id="report-status-select" class="form-control" required>
+            <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>Pending Review</option>
+            <option value="reviewed" ${currentStatus === 'reviewed' ? 'selected' : ''}>Under Review / Investigating</option>
+            <option value="resolved" ${currentStatus === 'resolved' ? 'selected' : ''}>Resolved (Action Taken)</option>
+            <option value="dismissed" ${currentStatus === 'dismissed' ? 'selected' : ''}>Dismissed (No Violation)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="report-admin-notes">Administrative Action Notes:</label>
+          <textarea id="report-admin-notes" class="form-control" rows="3" placeholder="Enter findings, user outreach details, or reason for resolution/dismissal...">${existingNotes}</textarea>
+        </div>
+
+        <div class="modal-footer" style="padding: 1rem 0 0; border-top: none; background: transparent;">
+          <button type="button" class="btn btn-secondary" onclick="ui.closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-report-review">Save Moderation Decision</button>
+        </div>
+      </form>
+    `;
+
+    ui.openModal(`Moderate Report #${reportId}`, modalHtml);
+
+    document.getElementById('admin-report-review-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const form = document.getElementById('admin-report-review-form');
+      const isValid = validator.validateForm(form, {
+        '#report-status-select': {
+          required: 'Please select a report status disposition.'
+        }
+      });
+      if (!isValid) return;
+
+      const submitBtn = document.getElementById('btn-submit-report-review');
+      submitBtn.disabled = true;
+
+      const newStatus = document.getElementById('report-status-select').value;
+      const adminNotes = document.getElementById('report-admin-notes').value.trim();
+
+      try {
+        await api.patch(`/admin/reports/${reportId}/status`, {
+          status: newStatus,
+          adminNotes
+        });
+
+        ui.closeModal();
+        ui.showToast(`Report #${reportId} updated to '${newStatus}'!`, 'success');
+        loadAdminReports();
+        loadAdminStats();
+      } catch (err) {
+        ui.showToast(err.message, 'error');
+        submitBtn.disabled = false;
+      }
+    });
+  };
+
   // 3. Load Skills Table
   async function loadAdminSkills() {
     const tableBody = document.getElementById('admin-skills-table-body');
@@ -173,15 +357,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalHtml = `
       <form id="admin-add-skill-form">
         <div class="form-group">
-          <label class="form-label" for="new-skill-name">Skill Name</label>
+          <label class="form-label" for="new-skill-name">Skill Name *</label>
           <input type="text" id="new-skill-name" class="form-control" placeholder="e.g. Graphic Design" required>
         </div>
         <div class="form-group">
-          <label class="form-label" for="new-skill-cat">Category</label>
+          <label class="form-label" for="new-skill-cat">Category *</label>
           <input type="text" id="new-skill-cat" class="form-control" placeholder="e.g. Design" required>
         </div>
         <div class="form-group">
-          <label class="form-label" for="new-skill-desc">Description</label>
+          <label class="form-label" for="new-skill-desc">Description (Optional)</label>
           <textarea id="new-skill-desc" class="form-control" rows="2" placeholder="Brief summary..."></textarea>
         </div>
         <div class="modal-footer" style="padding: 1rem 0 0; border-top: none; background: transparent;">
@@ -195,6 +379,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('admin-add-skill-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const form = document.getElementById('admin-add-skill-form');
+      const isValid = validator.validateForm(form, {
+        '#new-skill-name': {
+          required: 'Please enter a skill name.'
+        },
+        '#new-skill-cat': {
+          required: 'Please enter a category for the skill.'
+        }
+      });
+      if (!isValid) return;
+
+      const submitBtn = document.getElementById('btn-save-new-skill');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
       const name = document.getElementById('new-skill-name').value.trim();
       const category = document.getElementById('new-skill-cat').value.trim();
       const description = document.getElementById('new-skill-desc').value.trim();
@@ -207,6 +407,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadAdminStats();
       } catch (err) {
         ui.showToast(err.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add to Catalog';
       }
     });
   });
@@ -254,8 +456,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 5. Broadcast Announcement Form
   document.getElementById('admin-announcement-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const form = document.getElementById('admin-announcement-form');
+    const isValid = validator.validateForm(form, {
+      '#announcement-title': {
+        required: 'Please enter an announcement title.'
+      },
+      '#announcement-content': {
+        required: 'Please enter message content for the announcement.'
+      }
+    });
+    if (!isValid) return;
+
     const btn = document.getElementById('btn-publish-announcement');
     btn.disabled = true;
+    btn.textContent = 'Publishing...';
 
     const title = document.getElementById('announcement-title').value.trim();
     const content = document.getElementById('announcement-content').value.trim();
@@ -270,6 +485,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ui.showToast(err.message, 'error');
     } finally {
       btn.disabled = false;
+      btn.textContent = '📢 Publish Announcement';
     }
   });
 

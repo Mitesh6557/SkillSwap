@@ -48,55 +48,84 @@
         <p class="section-subtitle">Find community members offering skills you wish to learn</p>
       </div>
 
-      <!-- Advanced Filters Bar -->
-      <div class="search-filter-bar">
-        <div class="search-input-wrapper">
-          <label for="search-input" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Search by Skill, Name, or Bio</label>
-          <input type="text" id="search-input" class="form-control" placeholder="e.g. JavaScript, Python, Guitar, Figma...">
+      <!-- Navigation Tabs: Browse Directory vs. Smart Matches -->
+      <nav class="tab-nav" style="margin-bottom: 2rem;">
+        <button id="tab-btn-directory" class="tab-btn active">🌐 Browse Directory</button>
+        <button id="tab-btn-smart-matches" class="tab-btn">🎯 Smart Matches <span id="smart-badge-count" style="display:none; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: #fff; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: var(--radius-full); margin-left: 0.35rem; font-weight: 700;">NEW</span></button>
+      </nav>
+
+      <!-- Pane 1: Directory Search & Browse -->
+      <div id="pane-directory">
+        <!-- Advanced Filters Bar -->
+        <div class="search-filter-bar">
+          <div class="search-input-wrapper">
+            <label for="search-input" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Search by Skill, Name, or Bio</label>
+            <input type="text" id="search-input" class="form-control" placeholder="e.g. JavaScript, Python, Guitar, Figma...">
+          </div>
+
+          <div style="flex: 1; min-width: 180px;">
+            <label for="wanted-skill-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">They Want to Learn</label>
+            <input type="text" id="wanted-skill-filter" class="form-control" placeholder="Skill they are seeking...">
+          </div>
+
+          <div style="flex: 1; min-width: 160px;">
+            <label for="location-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Location</label>
+            <input type="text" id="location-filter" class="form-control" placeholder="City or Country...">
+          </div>
+
+          <div style="flex: 1; min-width: 160px;">
+            <label for="availability-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Availability</label>
+            <select id="availability-filter" class="form-control">
+              <option value="">Any Availability</option>
+              <option value="Weekends">Weekends</option>
+              <option value="Evenings">Evenings</option>
+              <option value="Weekdays">Weekdays</option>
+            </select>
+          </div>
+
+          <div style="display: flex; align-items: flex-end;">
+            <button id="reset-filters-btn" class="btn btn-secondary" style="height: 42px;">Reset</button>
+          </div>
         </div>
 
-        <div style="flex: 1; min-width: 180px;">
-          <label for="wanted-skill-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">They Want to Learn</label>
-          <input type="text" id="wanted-skill-filter" class="form-control" placeholder="Skill they are seeking...">
+        <!-- Active Filter Status & Count -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div id="results-count" style="font-size: 0.95rem; color: var(--color-text-muted); font-weight: 500;">
+            Showing available exchange partners...
+          </div>
         </div>
 
-        <div style="flex: 1; min-width: 160px;">
-          <label for="location-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Location</label>
-          <input type="text" id="location-filter" class="form-control" placeholder="City or Country...">
+        <!-- Users Grid -->
+        <div id="users-grid" class="users-grid">
+          <!-- Rendered by discover.js -->
         </div>
 
-        <div style="flex: 1; min-width: 160px;">
-          <label for="availability-filter" style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); display: block; margin-bottom: 0.25rem;">Availability</label>
-          <select id="availability-filter" class="form-control">
-            <option value="">Any Availability</option>
-            <option value="Weekends">Weekends</option>
-            <option value="Evenings">Evenings</option>
-            <option value="Weekdays">Weekdays</option>
-          </select>
-        </div>
-
-        <div style="display: flex; align-items: flex-end;">
-          <button id="reset-filters-btn" class="btn btn-secondary" style="height: 42px;">Reset</button>
+        <!-- Pagination -->
+        <div id="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 3rem;">
+          <button id="prev-page-btn" class="btn btn-outline btn-sm" disabled>&larr; Previous</button>
+          <span id="page-indicator" style="font-size: 0.9rem; font-weight: 600;">Page 1</span>
+          <button id="next-page-btn" class="btn btn-outline btn-sm" disabled>Next &rarr;</button>
         </div>
       </div>
 
-      <!-- Active Filter Status & Count -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <div id="results-count" style="font-size: 0.95rem; color: var(--color-text-muted); font-weight: 500;">
-          Showing available exchange partners...
+      <!-- Pane 2: Smart Matches (Compatibility Ranked) -->
+      <div id="pane-smart-matches" style="display: none;">
+        <div style="background: linear-gradient(135deg, rgba(124, 92, 252, 0.12), rgba(6, 182, 212, 0.08)); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">🎯 Smart Skill Matching</h2>
+              <p style="color: var(--color-text-secondary); font-size: 0.9rem; margin: 0;">
+                Personalized compatibility ranking based on reciprocal teach-and-learn skill overlaps, proficiency tiers, location, and scheduling.
+              </p>
+            </div>
+            <button id="refresh-matches-btn" class="btn btn-outline btn-sm" style="font-weight: 600;">🔄 Refresh Matches</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Users Grid -->
-      <div id="users-grid" class="users-grid">
-        <!-- Rendered by discover.js -->
-      </div>
-
-      <!-- Pagination -->
-      <div id="pagination-controls" style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 3rem;">
-        <button id="prev-page-btn" class="btn btn-outline btn-sm" disabled>&larr; Previous</button>
-        <span id="page-indicator" style="font-size: 0.9rem; font-weight: 600;">Page 1</span>
-        <button id="next-page-btn" class="btn btn-outline btn-sm" disabled>Next &rarr;</button>
+        <!-- Smart Matches Grid -->
+        <div id="smart-matches-grid" class="users-grid">
+          <!-- Rendered by discover.js -->
+        </div>
       </div>
     </div>
   </main>
@@ -113,6 +142,7 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/validation.js"></script>
   <script src="js/discover.js"></script>
 </body>
 </html>

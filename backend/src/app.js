@@ -20,6 +20,9 @@ const swapRoutes = require('./routes/swapRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const matchRoutes = require('./routes/matchRoutes');
+const sessionRoutes = require('./routes/sessionRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
@@ -94,6 +97,9 @@ app.use('/api/swaps', swapRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/matches', matchRoutes);
+app.use('/api/sessions', sessionRoutes);
+app.use('/api/reports', reportRoutes);
 
 // 6. Handle 404 for Unmatched Routes
 app.use((req, res, next) => {

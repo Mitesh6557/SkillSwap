@@ -65,3 +65,16 @@ INSERT IGNORE INTO `reviews` (`id`, `swap_id`, `reviewer_id`, `reviewee_id`, `ra
 INSERT IGNORE INTO `notifications` (`user_id`, `type`, `title`, `message`, `is_read`) VALUES
 (2, 'swap_request', 'New Swap Proposal', 'David Kim proposed a skill swap with you.', 0),
 (2, 'swap_accepted', 'Swap Accepted', 'Elena Rostova accepted your swap proposal.', 1);
+
+-- ----------------------------------------------------
+-- 7. Initial Demonstration Sessions
+-- ----------------------------------------------------
+INSERT IGNORE INTO `swap_sessions` (`id`, `swap_id`, `creator_id`, `title`, `topic`, `session_date`, `duration_minutes`, `agenda`, `meeting_url`, `status`) VALUES
+(1, 2, 4, 'Introductory Spanish & JavaScript Planning', 'Spanish Basics & JS Syntax', DATE_ADD(NOW(), INTERVAL 2 DAY), 60, '1. Review basic Spanish conversational phrases\n2. Set up JavaScript development environment', 'https://meet.google.com/demo-swap-session', 'confirmed'),
+(2, 2, 2, 'Follow-up Practice: Verbs & Async Code', 'Spanish Verbs & Promises', DATE_ADD(NOW(), INTERVAL 5 DAY), 45, 'Practice irregular verbs and review Promises/async-await in Node.', 'https://meet.google.com/demo-swap-session', 'pending');
+
+-- ----------------------------------------------------
+-- 8. Initial Demonstration Reports
+-- ----------------------------------------------------
+INSERT IGNORE INTO `reports` (`id`, `reporter_id`, `reported_user_id`, `reported_swap_id`, `reason`, `details`, `status`, `admin_notes`) VALUES
+(1, 3, 5, NULL, 'Spam / Commercial solicitation', 'User is sending promotional messages for unrelated commercial SEO services.', 'pending', NULL);

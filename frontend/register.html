@@ -98,6 +98,7 @@
   <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/validation.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       if (auth.isAuthenticated()) {
@@ -110,6 +111,23 @@
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // Comprehensive inline validation
+        const isValid = validator.validateForm(form, {
+          '#name': {
+            required: 'Please enter your full name.'
+          },
+          '#email': {
+            required: 'Please enter your email address.',
+            email: 'Please enter a valid email address (e.g. name@example.com).'
+          },
+          '#password': {
+            required: 'Please enter a password.',
+            minLength: { min: 6, message: 'Password must be at least 6 characters long.' }
+          }
+        });
+
+        if (!isValid) return;
 
         const name = document.getElementById('name').value.trim();
         const email = document.getElementById('email').value.trim();
@@ -129,6 +147,9 @@
           }, 600);
         } catch (err) {
           ui.showToast(err.message, 'error');
+          if (err.message && err.message.toLowerCase().includes('email')) {
+            validator.showError('#email', err.message);
+          }
           submitBtn.disabled = false;
           submitBtn.textContent = 'Create Free Account';
         }

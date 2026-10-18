@@ -165,7 +165,10 @@ const getReports = asyncHandler(async (req, res) => {
   const reports = await query(
     `SELECT r.*, 
             u_rep.name AS reporter_name,
-            u_tar.name AS reported_user_name
+            u_rep.email AS reporter_email,
+            u_tar.name AS reported_user_name,
+            u_tar.email AS reported_user_email,
+            u_tar.is_active AS reported_user_is_active
      FROM reports r
      JOIN users u_rep ON r.reporter_id = u_rep.id
      LEFT JOIN users u_tar ON r.reported_user_id = u_tar.id

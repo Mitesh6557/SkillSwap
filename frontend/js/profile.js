@@ -130,9 +130,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (actionBtn) {
           const discoverBase = window.location.pathname.endsWith('.html') ? 'discover.html' : 'discover';
           actionBtn.innerHTML = `
-            <a href="${discoverBase}?proposeUser=${user.id}" class="btn btn-primary">
-              ✨ Propose Skill Swap
-            </a>
+            <div style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
+              <a href="${discoverBase}?proposeUser=${user.id}" class="btn btn-primary">
+                ✨ Propose Skill Swap
+              </a>
+              <button type="button" class="btn btn-outline btn-sm" style="color: var(--color-danger); border-color: rgba(239, 68, 68, 0.4);" onclick="ui.openReportModal({ reportedUserId: ${user.id}, reportedUserName: '${encodeURIComponent(user.name)}' })">
+                🚩 Report Member
+              </button>
+            </div>
           `;
         }
       }
@@ -245,6 +250,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const editForm = document.getElementById('edit-profile-form');
   editForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (window.validator) {
+      const isValid = validator.validateForm(editForm, {
+        '#edit-name': {
+          required: 'Please enter your full name.'
+        }
+      });
+      if (!isValid) return;
+    }
+
     const saveBtn = document.getElementById('save-profile-btn');
     saveBtn.disabled = true;
     saveBtn.textContent = 'Saving...';
@@ -363,6 +378,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Toggle new skill fields
       document.getElementById('modal-select-skill').addEventListener('change', (e) => {
+        if (window.validator) validator.clearError(e.target);
         const isNew = e.target.value === 'NEW';
         document.getElementById('new-skill-fields').style.display = isNew ? 'block' : 'none';
       });
@@ -370,10 +386,32 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Submit
       document.getElementById('add-skill-modal-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const skillSelect = document.getElementById('modal-select-skill');
+        let selectedId = skillSelect.value;
+
+        if (!selectedId) {
+          validator.showError(skillSelect, 'Please choose a skill or select "+ Add New Custom Skill to Catalog".');
+          skillSelect.focus();
+          return;
+        }
+
+        if (selectedId === 'NEW') {
+          const isValidNew = validator.validateForm('#add-skill-modal-form', {
+            '#modal-new-skill-name': {
+              required: 'Please enter a name for the new skill.'
+            },
+            '#modal-new-skill-category': {
+              required: 'Please enter a category (e.g. Technology, Design, Languages).'
+            }
+          });
+          if (!isValidNew) return;
+        }
+
         const submitBtn = document.getElementById('modal-add-skill-btn');
         submitBtn.disabled = true;
+        submitBtn.textContent = 'Adding...';
 
-        let selectedId = document.getElementById('modal-select-skill').value;
         const level = document.getElementById('modal-skill-level')?.value || 'intermediate';
         const description = document.getElementById('modal-skill-desc').value.trim();
 
@@ -381,19 +419,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (selectedId === 'NEW') {
             const name = document.getElementById('modal-new-skill-name').value.trim();
             const category = document.getElementById('modal-new-skill-category').value.trim();
-            if (!name || !category) {
-              ui.showToast('Skill name and category are required.', 'error');
-              submitBtn.disabled = false;
-              return;
-            }
             const createRes = await api.post('/skills', { name, category });
             selectedId = createRes.data.id;
-          }
-
-          if (!selectedId) {
-            ui.showToast('Please select or specify a skill.', 'error');
-            submitBtn.disabled = false;
-            return;
           }
 
           await api.post('/skills/user', {
@@ -409,6 +436,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) {
           ui.showToast(err.message, 'error');
           submitBtn.disabled = false;
+          submitBtn.textContent = 'Add to Profile';
         }
       });
     } catch (err) {
