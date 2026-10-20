@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       smartMatchesGrid.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 3.5rem 1.5rem; background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
           <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
-          <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">Log in for Smart Matching</h3>
+          <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-main);">Log in for Smart Matching</h3>
           <p style="color: var(--color-text-muted); max-width: 460px; margin: 0 auto 1.5rem;">
             Our smart matching engine analyzes reciprocal learning goals and skill profiles to find your ideal exchange partners.
           </p>
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         smartMatchesGrid.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 3.5rem 1.5rem; background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
             <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
-            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">Add Skills to Unlock Smart Matches</h3>
+            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-main);">Add Skills to Unlock Smart Matches</h3>
             <p style="color: var(--color-text-muted); max-width: 480px; margin: 0 auto 1.5rem;">
               You haven't added any offered or wanted skills to your profile yet. Add the skills you can teach and what you want to learn to get tailored, high-compatibility swap recommendations!
             </p>
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         smartMatchesGrid.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 3.5rem 1.5rem; background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
             <div style="font-size: 3rem; margin-bottom: 1rem;">✨</div>
-            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">No High-Compatibility Matches Yet</h3>
+            <h3 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-main);">No High-Compatibility Matches Yet</h3>
             <p style="color: var(--color-text-muted); max-width: 480px; margin: 0 auto 1.5rem;">
               We couldn't find an exact reciprocal partner right now. As more members join and list skills, your smart recommendations will update automatically!
             </p>
@@ -441,13 +441,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             .join(' ');
 
           return `
-            <div class="user-card" style="border: 1px solid ${m.is_reciprocal ? 'rgba(124, 92, 252, 0.45)' : 'var(--color-border)'};">
+            <div class="user-card" style="border: 1px solid ${m.is_reciprocal ? 'var(--color-accent)' : 'var(--color-border)'};">
               <div class="user-card-header" style="margin-bottom: 0.75rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                   <a href="${profileUrl}" class="user-card-profile-link" onclick="sessionStorage.setItem('selected_profile_id', '${m.id}')" style="display: flex; align-items: center; gap: 0.85rem; text-decoration: none; color: inherit; flex: 1;">
                     <div class="avatar-circle">${initials}</div>
                     <div class="user-card-info">
-                      <h3 style="margin: 0; color: #fff;">${m.name}</h3>
+                      <h3 style="margin: 0; color: var(--color-text-main);">${m.name}</h3>
                       <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: var(--color-text-muted);">
                         📍 ${m.location || 'Remote'} &bull; 🕒 ${m.availability || 'Flexible'}
                       </p>
