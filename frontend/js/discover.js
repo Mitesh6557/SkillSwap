@@ -377,9 +377,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       const res = await api.get('/matches?limit=30');
-      const data = res.data || {};
-      const matches = data.matches || [];
-      const userSkillsCount = data.user_skills_count || 0;
+      const matches = Array.isArray(res.data) ? res.data : (res.data?.matches || []);
+      const userSkillsCount = res.userSkillsCount !== undefined ? res.userSkillsCount : (res.data?.user_skills_count !== undefined ? res.data.user_skills_count : (matches.length > 0 ? matches.length : 0));
 
       if (smartBadgeCount) {
         if (matches.length > 0) {

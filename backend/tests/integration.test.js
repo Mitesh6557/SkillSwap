@@ -71,7 +71,7 @@ async function runTests() {
   try {
     const login = await request('/api/auth/login', {
       method: 'POST',
-      body: { email: 'sarah.chen@example.com', password: 'Password123!' },
+      body: { email: 'priya.patel@example.com', password: 'Password123!' },
     });
     userToken = login.body.data ? login.body.data.token : null;
     assert(login.status === 200 && !!userToken, 'POST /api/auth/login succeeds with valid JWT');
@@ -97,7 +97,7 @@ async function runTests() {
     const me = await request('/api/auth/me', {
       headers: { Authorization: `Bearer ${userToken}` },
     });
-    assert(me.status === 200 && me.body.data.email === 'sarah.chen@example.com', 'GET /api/auth/me returns current user');
+    assert(me.status === 200 && me.body.data.email === 'priya.patel@example.com', 'GET /api/auth/me returns current user');
   } catch (err) {
     assert(false, `GET /api/auth/me error: ${err.message}`);
   }
