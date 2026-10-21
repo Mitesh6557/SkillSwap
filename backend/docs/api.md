@@ -60,7 +60,7 @@ Authorization: Bearer <your_jwt_token>
 - **Request Body:**
   ```json
   {
-    "email": "sarah.chen@example.com",
+    "email": "priya.patel@example.com",
     "password": "Password123!"
   }
   ```
@@ -72,8 +72,8 @@ Authorization: Bearer <your_jwt_token>
     "data": {
       "user": {
         "id": 2,
-        "name": "Sarah Chen",
-        "email": "sarah.chen@example.com",
+        "name": "Priya Patel",
+        "email": "priya.patel@example.com",
         "role": "user",
         "avatar_url": null,
         "availability": "Weekday evenings (6-9 PM)",
@@ -94,11 +94,11 @@ Authorization: Bearer <your_jwt_token>
     "success": true,
     "data": {
       "id": 2,
-      "name": "Sarah Chen",
-      "email": "sarah.chen@example.com",
+      "name": "Priya Patel",
+      "email": "priya.patel@example.com",
       "role": "user",
-      "location": "San Francisco, CA",
-      "bio": "Full-stack engineer with 6+ years experience in React, Node.js, and cloud systems.",
+      "location": "Ahmedabad, Gujarat",
+      "bio": "Senior full-stack MERN engineer and tech mentor from Ahmedabad. Passionate about clean code, scalable Node.js architectures, and learning UI/UX design.",
       "avatar_url": null,
       "availability": "Weekday evenings (6-9 PM)",
       "is_public": 1,

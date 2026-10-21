@@ -91,7 +91,7 @@ const ui = {
           🔔 <span id="nav-unread-badge" style="display:none; background:var(--color-danger); color:#fff; border-radius:10px; padding:2px 6px; font-size:11px; font-weight:700;">0</span>
         </a>
         <a href="${window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile'}" class="btn btn-outline btn-sm" onclick="sessionStorage.removeItem('selected_profile_id')" style="display: flex; align-items: center; gap: 0.55rem;">
-          <span style="display:inline-block; width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, var(--color-primary), var(--color-accent)); color:#fff; text-align:center; font-size:12px; font-weight:700; line-height:28px;">${initials}</span>
+          <span style="display:inline-block; width:28px; height:28px; border-radius:50%; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; text-align:center; font-size:12px; font-weight:800; line-height:26px;">${initials}</span>
           ${user?.name?.split(' ')[0] || 'Profile'}
         </a>
         <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>

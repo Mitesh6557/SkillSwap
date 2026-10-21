@@ -76,7 +76,7 @@ async function runSeeder() {
     console.log('🎉 Database seeding completed safely with zero errors!');
     console.log('Default test accounts:');
     console.log(' - Admin: admin@skillswap.com (Password: Password123!)');
-    console.log(' - User:  sarah.chen@example.com (Password: Password123!)');
+    console.log(' - User:  priya.patel@example.com (Password: Password123!)');
     console.log('----------------------------------------------------');
   } catch (err) {
     console.error('\n❌ Seeding failed with error:');

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       swapsList.innerHTML = `
         <div class="card" style="text-align: center; padding: 3.5rem 1.5rem;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">🤝</div>
-          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">No exchanges found</h3>
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-main);">No exchanges found</h3>
           <p style="color: var(--color-text-muted); max-width: 440px; margin: 0 auto 1.5rem;">
             ${
               currentFilter === 'all'
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               ${
                 swap.status === 'accepted'
                   ? `
-                <button class="btn btn-outline btn-sm" style="border-color: var(--color-primary); color: #fff; font-weight: 600;" onclick="openScheduleSessionModal(${swap.id}, '${encodeURIComponent(partnerName)}', '${encodeURIComponent(swap.offered_skill_name)}', '${encodeURIComponent(swap.requested_skill_name)}')">
+                <button class="btn btn-outline btn-sm" style="border-color: var(--color-border); color: var(--color-primary); font-weight: 600;" onclick="openScheduleSessionModal(${swap.id}, '${encodeURIComponent(partnerName)}', '${encodeURIComponent(swap.offered_skill_name)}', '${encodeURIComponent(swap.requested_skill_name)}')">
                   📅 Schedule Session
                 </button>
                 <button class="btn btn-primary btn-sm" onclick="handleSwapAction(${swap.id}, 'completed')">
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       swapsList.innerHTML = `
         <div class="card" style="text-align: center; padding: 3.5rem 1.5rem;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">📅</div>
-          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff;">No Scheduled Sessions Yet</h3>
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--color-text-main);">No Scheduled Sessions Yet</h3>
           <p style="color: var(--color-text-muted); max-width: 480px; margin: 0 auto 1.5rem;">
             When you and an exchange partner accept a skill swap, you can schedule dedicated 1-on-1 learning sessions here.
           </p>
@@ -236,11 +236,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
                   <div>
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                      <h3 style="font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0;">${session.title}</h3>
+                      <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-text-main); margin: 0;">${session.title}</h3>
                       ${statusBadge}
                     </div>
                     <p style="margin: 0.35rem 0 0; font-size: 0.875rem; color: var(--color-text-muted);">
-                      Topic: <strong style="color: var(--color-accent);">${session.topic || session.offered_skill_name}</strong> &bull; With <a href="${window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile'}?id=${partnerId}" onclick="sessionStorage.setItem('selected_profile_id', '${partnerId}')" style="color: #fff; font-weight: 600;">${partnerName}</a>
+                      Topic: <strong style="color: var(--color-accent);">${session.topic || session.offered_skill_name}</strong> &bull; With <a href="${window.location.pathname.endsWith('.html') ? 'profile.html' : 'profile'}?id=${partnerId}" onclick="sessionStorage.setItem('selected_profile_id', '${partnerId}')" style="color: var(--color-primary); font-weight: 600;">${partnerName}</a>
                     </p>
                   </div>
 
@@ -255,11 +255,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="session-meta-grid">
                   <div>
                     <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-text-muted); display: block; font-weight: 700;">Date & Time</span>
-                    <strong style="font-size: 0.95rem; color: #fff;">🕒 ${sessionDateDisplay}</strong>
+                    <strong style="font-size: 0.95rem; color: var(--color-text-main);">🕒 ${sessionDateDisplay}</strong>
                   </div>
                   <div>
                     <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-text-muted); display: block; font-weight: 700;">Duration</span>
-                    <strong style="font-size: 0.95rem; color: #fff;">⏱️ ${session.duration_minutes} minutes</strong>
+                    <strong style="font-size: 0.95rem; color: var(--color-text-main);">⏱️ ${session.duration_minutes} minutes</strong>
                   </div>
                   <div>
                     <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-text-muted); display: block; font-weight: 700;">Exchange Focus</span>
@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${
                   session.agenda
                     ? `
-                  <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.875rem;">
+                  <div style="background: var(--color-surface-soft); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.875rem;">
                     <strong style="color: var(--color-text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.25rem;">Agenda / Notes:</strong>
                     <div style="color: var(--color-text-secondary); line-height: 1.5;">${session.agenda}</div>
                   </div>

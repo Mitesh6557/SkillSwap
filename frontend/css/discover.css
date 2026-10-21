@@ -50,9 +50,9 @@
 }
 
 .chip-btn {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  padding: 0.4rem 0.95rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border-strong);
+  padding: 0.45rem 1.05rem;
   border-radius: var(--radius-full);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -65,15 +65,16 @@
 
 .chip-btn:hover {
   background: var(--color-surface-hover);
-  color: #ffffff;
-  border-color: var(--color-border-strong);
+  color: var(--color-text-main);
+  border-color: #94a3b8;
 }
 
 .chip-btn.active {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #6366f1 100%);
-  border-color: var(--color-primary);
+  background: #0f172a;
+  border-color: #0f172a;
   color: #ffffff;
-  box-shadow: 0 0 12px rgba(124, 92, 252, 0.35);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
 }
 
 /* Users Grid */
@@ -97,7 +98,7 @@
 
 .user-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md), var(--glow-primary);
+  box-shadow: var(--shadow-md);
   border-color: var(--color-border-strong);
 }
 
@@ -110,22 +111,22 @@
 }
 
 .user-card-profile-link:hover .user-card-info h3 {
-  color: var(--color-secondary-purple);
+  color: var(--color-accent);
 }
 
 .avatar-circle {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, rgba(124, 92, 252, 0.3), rgba(6, 182, 212, 0.3));
-  color: #ffffff;
+  background: #e0f2fe;
+  color: #0284c7;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.05rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--color-border);
+  border: 2px solid #bae6fd;
   box-shadow: var(--shadow-xs);
   flex-shrink: 0;
   letter-spacing: 0.02em;
@@ -136,7 +137,7 @@
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #ffffff;
+  color: var(--color-text-main);
   transition: color var(--transition-fast);
 }
 
@@ -176,15 +177,15 @@
 }
 
 .skill-tag.offered {
-  background: var(--color-primary-light);
-  color: var(--color-secondary-purple);
-  border-color: var(--color-primary-border);
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
 }
 
 .skill-tag.wanted {
-  background: var(--color-accent-light);
-  color: var(--color-accent-dark);
-  border-color: var(--color-accent-border);
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
 }
 
 .user-card-footer {
@@ -198,17 +199,17 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: linear-gradient(135deg, var(--color-primary), #6366f1);
+  background: #0f172a;
   color: #ffffff;
   font-weight: 800;
   font-size: 0.8125rem;
   padding: 0.35rem 0.75rem;
   border-radius: var(--radius-full);
-  box-shadow: 0 0 12px rgba(124, 92, 252, 0.3);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.15);
 }
 
 .match-reasons-box {
-  background: var(--color-surface-subtle);
+  background: #f8fafc;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.75rem 0.95rem;
@@ -237,7 +238,7 @@
 
 .compatibility-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
   border-radius: var(--radius-full);
   transition: width 0.6s ease;
 }
