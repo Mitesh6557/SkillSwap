@@ -27,14 +27,21 @@ INSERT IGNORE INTO `skills` (`id`, `name`, `category`, `description`) VALUES
 -- 2. Default Test Accounts (Admin & Indian / Gujarat Community)
 -- Passwords hashed with bcrypt (10 rounds): Password123!
 -- ----------------------------------------------------
-INSERT IGNORE INTO `users` (`id`, `name`, `email`, `password_hash`, `role`, `bio`, `location`, `availability`, `is_public`, `is_active`) VALUES
+INSERT INTO `users` (`id`, `name`, `email`, `password_hash`, `role`, `bio`, `location`, `availability`, `is_public`, `is_active`) VALUES
 (1, 'SkillSwap Admin', 'admin@skillswap.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'admin', 'Platform Administrator & Community Overseer.', 'Vadodara, CA', 'Full-time', 1, 1),
-(2, 'Priya Patel', 'priya.patel@example.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Senior full-stack MERN engineer and tech mentor from Ahmedabad. Passionate about clean code, scalable Node.js architectures, and learning UI/UX design.', 'Ahmedabad, Gujarat', 'Weekday evenings (6-9 PM)', 1, 1),
-(3, 'Rohan Joshi', 'rohan.joshi@example.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Senior product designer with 6+ years experience in Figma, design systems, and UX research. Eager to connect designs directly with JavaScript & web apps.', 'Vadodara, Gujarat', 'Weekends & Evenings', 1, 1),
-(4, 'Ananya Desai', 'ananya.desai@example.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Commercial photographer and digital content creator based in Surat. Looking to master Python for data analysis, automation, and modern web portfolios.', 'Surat, Gujarat', 'Flexible (Afternoons & Weekends)', 1, 1),
-(5, 'Kavya Mehta', 'kavya.mehta@example.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Acoustic and classical guitarist for 10+ years, independent music instructor in Rajkot. Excited to learn digital photography, video editing, and marketing.', 'Rajkot, Gujarat', 'Weekends', 1, 1),
+(2, 'Priya Patel', 'priya.patel@gmail.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Senior full-stack MERN engineer and tech mentor from Ahmedabad. Passionate about clean code, scalable Node.js architectures, and learning UI/UX design.', 'Ahmedabad, Gujarat', 'Weekday evenings (6-9 PM)', 1, 1),
+(3, 'Rohan Joshi', 'rohan.joshi@gmail.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Senior product designer with 6+ years experience in Figma, design systems, and UX research. Eager to connect designs directly with JavaScript & web apps.', 'Vadodara, Gujarat', 'Weekends & Evenings', 1, 1),
+(4, 'Ananya Desai', 'ananya.desai@gmail.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Commercial photographer and digital content creator based in Surat. Looking to master Python for data analysis, automation, and modern web portfolios.', 'Surat, Gujarat', 'Flexible (Afternoons & Weekends)', 1, 1),
+(5, 'Kavya Mehta', 'kavya.mehta@gmail.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Acoustic and classical guitarist for 10+ years, independent music instructor in Rajkot. Excited to learn digital photography, video editing, and marketing.', 'Rajkot, Gujarat', 'Weekends', 1, 1),
 (6, 'Mitesh Tank', 'tankmtiesh143@gmail.com', '$2a$10$l5mHBkLCVecwe.E8Go0gXuwb1yVybc6TNzBQLukQgmIeEz13NZxj.', 'user', 'Full-stack web developer and UI designer from Dhandhuka, Gujarat. Passionate about building high-performance web applications and mastering AI tools.', 'Dhandhuka, Gujarat', 'Weekends & Evenings', 1, 1),
-(7, 'Bhavin Shah', 'bhavin.shah@example.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Data analytics consultant and corporate trainer in Gandhinagar. Expert in Python data analysis and executive public speaking; learning full-stack JS.', 'Gandhinagar, Gujarat', 'Weekdays & Weekends', 1, 1);
+(7, 'Bhavin Shah', 'bhavin.shah@gmail.com', '$2a$10$eZVjpMf31.n2IVdvb3pzMuBUxgv0Weq44zu7NILPpr2bHFjefWxDe', 'user', 'Data analytics consultant and corporate trainer in Gandhinagar. Expert in Python data analysis and executive public speaking; learning full-stack JS.', 'Gandhinagar, Gujarat', 'Weekdays & Weekends', 1, 1)
+ON DUPLICATE KEY UPDATE 
+  `name` = VALUES(`name`),
+  `email` = VALUES(`email`),
+  `password_hash` = VALUES(`password_hash`),
+  `bio` = VALUES(`bio`),
+  `location` = VALUES(`location`),
+  `availability` = VALUES(`availability`);
 
 -- ----------------------------------------------------
 -- 3. User Skill Offerings and Learning Goals
